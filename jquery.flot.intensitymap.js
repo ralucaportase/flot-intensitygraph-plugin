@@ -32,10 +32,7 @@ THE SOFTWARE.
                 active: false,
                 show: false,
                 radius : 20,
-                visible : true,
-                width : 0,
-                height : 0,
-                max : false
+                max : 1
             }
         }
     };
@@ -63,7 +60,6 @@ THE SOFTWARE.
                     options.series.intensitymap.gradient = defaultGradient;
                 }
                 opt = options;
-                //plot.hooks.processRawData.push(processRawData);
                 plot.hooks.drawSeries.push(drawSeries);
                 initColorPalette();
             }
@@ -85,13 +81,6 @@ THE SOFTWARE.
             //delete canvas; delete grad; delete ctx;
         }
 
-        function processRawData(plot,s,data,datapoints){
-            if(s.intensitymap.show === true){
-                //s.nearBy.findItemDefault = s.nearBy.findItem;
-                //s.nearBy.findItem = findNearbyItemHeatmap;
-            }
-        }
-
         function drawSeries(plot, ctx, serie){
             //var acanvas,actx;
             if(opt.series.intensitymap.debug === true) { series = serie;}
@@ -103,7 +92,6 @@ THE SOFTWARE.
             function drawRectangle(ctx,x, y, value){
                 // storing the variables because they will be often used
                 var r2 = serie.intensitymap.radius,
-                    max = serie.intensitymap.max,
                     xb = x-r2, yb = y-r2, mul = 2*r2;
                 var alpha = value/serie.intensitymap.max;
                 var alpha255 = Math.round( alpha * 255);
