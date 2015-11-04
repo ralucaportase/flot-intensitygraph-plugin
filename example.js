@@ -5,8 +5,8 @@ $(function () {
     'use strict';
     var plot;
     var offset = 0.0;
-    var h  = 50;
-    var w = 100;
+    var h  = 51;
+    var w = 101;
     var iMap = [];
 
     function updateData() {
@@ -39,13 +39,14 @@ $(function () {
     plot = $.plot("#placeholder", [
         {
             data: iMap
-        }    ], {
+        }
+    ], {
         series: {
             intensitymap: {
                 active: true,
                 show: true,
                 max: 160,
-                radius : 4,
+                radius : 3.5,
                 gradient : { 0: 'red', 0.12: 'orange', 0.25: 'yellow', 0.37: 'lightgreen', 0.5: 'cyan', 0.62: 'lightblue', 0.75: 'indigo', 0.9: 'violet', 1: 'white'}
 
             }

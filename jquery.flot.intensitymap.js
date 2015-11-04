@@ -95,10 +95,10 @@ THE SOFTWARE.
         function drawSeries(plot, ctx, serie){
             //var acanvas,actx;
             if(opt.series.intensitymap.debug === true) { series = serie;}
-            offset = plot.getPlotOffset();
+            var offset = plot.getPlotOffset();
             for(var i = serie.data.length - 1; i >= 0 ;i--){
                 var pt = serie.data[i];
-                drawRectangle(ctx,serie.xaxis.p2c(pt[0]),serie.yaxis.p2c(pt[1]),pt[2]);
+                drawRectangle(ctx,serie.xaxis.p2c(pt[0]) + offset.left ,serie.yaxis.p2c(pt[1]) + offset.top ,pt[2]);
             }
             function drawRectangle(ctx,x, y, value){
                 // storing the variables because they will be often used
@@ -108,8 +108,8 @@ THE SOFTWARE.
                 var alpha = value/serie.intensitymap.max;
                 var alpha255 = Math.round( alpha * 255);
                 var palette = opt.series.intensitymap.gradient;
-                offset = alpha255*4;
-                ctx.fillStyle = 'rgba(' + palette[offset] + ',' + palette[offset + 1] + ',' + palette[offset+2] + ','+ 1 +')';
+                index = alpha255*4;
+                ctx.fillStyle = 'rgba(' + palette[index] + ',' + palette[index + 1] + ',' + palette[index + 2] + ','+ 1 +')';
                 ctx.fillRect(xb,yb,mul,mul);
             }
         }
