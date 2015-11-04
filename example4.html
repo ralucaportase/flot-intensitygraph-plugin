@@ -5,15 +5,8 @@
     <title>Loading and playing a sound with the Web Audio API</title>
     <link href="example.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="chroma.js"></script>
     <script language="javascript" type="text/javascript" src="jquery.flot.js"></script>
     <script language="javascript" type="text/javascript" src="jquery.flot.intensitymap.js"></script>
-
-    <style>
-        * {
-            font-family: sans-serif;
-        }
-    </style>
 </head>
 
 <body style="background-color: white;">
@@ -24,6 +17,10 @@
         <div class="demo-container">
             <div id="placeholder" class="demo-placeholder"></div>
         </div>
+        <p style="font-size:12px">Music:<br>
+        Five Armies by Kevin MacLeod (incompetech.com)<br>
+        Licensed under Creative Commons: By Attribution 3.0<br>
+        http://creativecommons.org/licenses/by/3.0/</P>
     </div>
 
     <script type="text/javascript">
@@ -40,9 +37,10 @@
                     radius: 3.5,
                     gradient: {
                         0: 'white',
-                        0.01: 'red',
-                        0.5: 'orange',
-                        1: 'yellow',
+                        0.1: 'red',
+                        0.3: 'orange',
+                        0.7: 'yellow',
+                        1: 'lightgreen',
                     }
 
                 }
@@ -55,6 +53,9 @@
                 min: -10,
                 max: 75
             },
+            grid: {
+              aboveData: true
+            }
         });
 
         var h = 64;
