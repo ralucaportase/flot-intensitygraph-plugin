@@ -25,6 +25,13 @@
 
     <script type="text/javascript">
         var iMap = [];
+        var h = 64;
+        var w = 101;
+        var count = 0;
+        
+        for (var i  = 0; i < w; i++)
+          for (var j = 0; j < h; j++)
+              iMap.push([i, j, 0]);
 
         plot = $.plot("#placeholder", [{
             data: iMap
@@ -33,34 +40,30 @@
                 intensitymap: {
                     active: true,
                     show: true,
-                    max: 160,
-                    radius: 3.5,
+                    max: 255,
+                    radius: 4,
                     gradient: {
                         0: 'white',
                         0.1: 'red',
                         0.3: 'orange',
-                        0.7: 'yellow',
+                        0.6: 'yellow',
                         1: 'lightgreen',
                     }
 
                 }
             },
-            xaxis: {
-                min: -10,
-                max: 110
+            xxxaxis: {
+                min: -1,
+                max: 102
             },
             yaxis: {
-                min: -10,
-                max: 75
+                min: -1,
+                max: 65
             },
             grid: {
               aboveData: true
             }
         });
-
-        var h = 64;
-        var w = 101;
-        var count = 0;
 
         function updateData(data) {
             if (iMap.length > w * h) {
@@ -73,8 +76,8 @@
                 iMap.push([count, j, data[j]]);
             }
 
-            if (count++ > w)
-                count = 0;;
+            count++;
+            axes = plot.getAxes();
 
             plot.setData([{
                 data: iMap

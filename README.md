@@ -3,4 +3,5 @@
 > An intensity map plugin for flot
 
 
-[Demo](https://rawgit.com/cipix2000/flot-intensitymap-plugin/master/example.html)
+[Demo: rainbow](https://rawgit.com/cipix2000/flot-intensitymap-plugin/master/example.html)
+[Demo: sound](https://rawgit.com/cipix2000/flot-intensitymap-plugin/master/example4.html)
