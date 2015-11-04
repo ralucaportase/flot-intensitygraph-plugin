@@ -1,2 +1,3 @@
 # flot-intensitymap-plugin
-an intensity map plugin for flot
+
+> An intensity map plugin for flot
