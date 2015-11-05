@@ -92,12 +92,12 @@ THE SOFTWARE.
             function drawRectangle(ctx,x, y, value){
                 // storing the variables because they will be often used
                 var r2 = serie.intensitymap.radius,
-                    xb = x-r2, yb = y-r2, mul = 2*r2;
+                    xb = Math.round(x-r2), yb = Math.round(y-r2), mul = 2*r2;
                 var alpha = value/serie.intensitymap.max;
                 var alpha255 = Math.round( alpha * 255);
                 var palette = opt.series.intensitymap.gradient;
                 index = alpha255*4;
-                ctx.fillStyle = 'rgba(' + palette[index] + ',' + palette[index + 1] + ',' + palette[index + 2] + ','+ 1 +')';
+                ctx.fillStyle = 'rgb(' + palette[index] + ',' + palette[index + 1] + ',' + palette[index + 2] + ')';
                 ctx.fillRect(xb,yb,mul,mul);
             }
         }

@@ -7,19 +7,33 @@ $(function () {
   var offset = 0.0;
   var h = 51;
   var w = 101;
+  var max = Math.sqrt(h*h + w*w);
   var iMap = [];
+  var count = 0;
+
+  function rainbow(i, j, count) {
+      var res = count + Math.sqrt(i*i + j*j);
+
+      if (res > max)
+        res -=max;
+
+    return res;
+  }
 
   function updateData() {
     iMap = [];
     for (var i = 0; i < w; i++) {
       for (var j = 0; j < h; j++) {
-        iMap.push([i, j, i + j]);
+        iMap.push([i, j, rainbow(i, j, count)]);
       }
     }
+    count++;
+    if (count > max)
+        count = 0;
   }
 
   function updateGraph() {
-    setTimeout(updateGraph, 16);
+    //setTimeout(updateGraph, 16);
 
     if ($('#checkbox').prop('checked')) {
       updateData();
@@ -31,6 +45,7 @@ $(function () {
       plot.setupGrid();
       plot.draw();
     }
+    requestAnimationFrame(updateGraph);
   }
 
   updateData();
@@ -41,8 +56,8 @@ $(function () {
       intensitymap: {
         active: true,
         show: true,
-        max: 160,
-        radius: 3.5,
+        max: max,
+        radius: 4.5,
         gradient: {
           0: 'red',
           0.12: 'orange',
@@ -52,18 +67,19 @@ $(function () {
           0.62: 'lightblue',
           0.75: 'indigo',
           0.9: 'violet',
-          1: 'white'
+          1: 'red'
         }
 
       }
     },
+/*
     xaxis: {
       min: -10,
       max: 110
-    },
+  },*/
     yaxis: {
-      min: -10,
-      max: 60
+      min: -0,
+      max: 50
     },
     grid: {
       aboveData: true
