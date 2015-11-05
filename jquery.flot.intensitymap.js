@@ -83,7 +83,7 @@ THE SOFTWARE.
 
         function drawSeries(plot, ctx, serie){
             var r2 = serie.intensitymap.radius,
-                mul = mul = 2*r2;
+                mul = 2*r2;
             var palette = opt.series.intensitymap.gradient;
 
             if(opt.series.intensitymap.debug === true) { series = serie;}
