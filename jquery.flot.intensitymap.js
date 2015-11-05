@@ -82,26 +82,28 @@ THE SOFTWARE.
         }
 
         function drawSeries(plot, ctx, serie){
-            //var acanvas,actx;
+            var r2 = serie.intensitymap.radius,
+                mul = mul = 2*r2;
+            var palette = opt.series.intensitymap.gradient;
+
             if(opt.series.intensitymap.debug === true) { series = serie;}
             var offset = plot.getPlotOffset();
             for(var i = serie.data.length - 1; i >= 0 ;i--){
                 var pt = serie.data[i];
                 drawRectangle(ctx,serie.xaxis.p2c(pt[0]) + offset.left ,serie.yaxis.p2c(pt[1]) + offset.top ,pt[2]);
             }
+
             function drawRectangle(ctx,x, y, value){
                 // storing the variables because they will be often used
-                var r2 = serie.intensitymap.radius,
-                    xb = Math.round(x-r2), yb = Math.round(y-r2), mul = 2*r2;
-                var alpha = value/serie.intensitymap.max;
-                var alpha255 = Math.round( alpha * 255);
-                var palette = opt.series.intensitymap.gradient;
-                index = alpha255*4;
+                var xb = Math.round(x-r2),
+                    yb = Math.round(y-r2);
+                var index = Math.round( value/serie.intensitymap.max * 255) * 4;
                 ctx.fillStyle = 'rgb(' + palette[index] + ',' + palette[index + 1] + ',' + palette[index + 2] + ')';
                 ctx.fillRect(xb,yb,mul,mul);
             }
         }
     }
+
     $.plot.plugins.push({
         init: init,
         options: defaultOptions,
