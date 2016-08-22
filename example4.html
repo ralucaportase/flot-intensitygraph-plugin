@@ -29,9 +29,13 @@
         var w = 101;
         var count = 0;
 
-        for (var i  = 0; i < w; i++)
-          for (var j = 0; j < h; j++)
-              iMap.push([i, j, 0]);
+        for (var i  = 0; i < w; i++) {
+          var column = [];
+          for (var j = 0; j < h; j++) {
+              column.push(0);
+          }
+          iMap.push(column);
+        }
 
         plot = $.plot("#placeholder", [{
             data: iMap
@@ -56,7 +60,7 @@
                 max: 102
             },
             yaxis: {
-                min: -1,
+                min:  0,
                 max: 65
             },
             grid: {
@@ -65,15 +69,15 @@
         });
 
         function updateData(data) {
-            if (iMap.length > w * h) {
-                for (var j = 0; j < h; j++) {
-                    iMap.shift();
-                }
+            if (iMap.length > w) {
+                iMap.shift();
             }
 
+            var column = [];
             for (var j = 0; j < h; j++) {
-                iMap.push([count, j, data[j]]);
+                column.push(data[j]);
             }
+            iMap.push(column);
 
             count++;
             axes = plot.getAxes();
