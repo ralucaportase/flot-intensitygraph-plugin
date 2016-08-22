@@ -8,6 +8,8 @@ $(function () {
   var h = 51;
   var w = 101;
   var max = Math.sqrt(h * h + w * w);
+  var floorMaxToo = 10;
+  var legendMax = max % floorMaxToo === 0 ? max : Math.floor(max - (max % floorMaxToo) + floorMaxToo);
   var iMap = [];
   var count = 0;
 
@@ -23,9 +25,11 @@ $(function () {
   function updateData() {
     iMap = [];
     for (var i = 0; i < w; i++) {
+	  var raw = [];
       for (var j = 0; j < h; j++) {
-        iMap.push([i, j, rainbow(i, j, count)]);
+        raw.push(rainbow(i, j, count));
       }
+      iMap.push(raw);
     }
     count++;
     if (count > max)
@@ -33,7 +37,6 @@ $(function () {
   }
 
   function updateGraph() {
-    //setTimeout(updateGraph, 16);
 
     if ($('#checkbox').prop('checked')) {
       updateData();
@@ -53,46 +56,47 @@ $(function () {
     data: iMap
   }], {
     series: {
-      intensitymap: {
+      intensitygraph: {
         active: true,
         show: true,
         max: max,
         radius: 4.5,
-        gradient: {
-          0: 'red',
-          0.12: 'orange',
-          0.25: 'yellow',
-          0.37: 'lightgreen',
-          0.5: 'cyan',
-          0.62: 'lightblue',
-          0.75: 'indigo',
-          0.9: 'violet',
-          1: 'red'
-        },
+        gradient: [
+          { value: 0, color: 'red' },
+          { value: 0.12, color: 'orange' },
+          { value: 0.25, color: 'yellow' },
+          { value: 0.37, color: 'lightgreen' },
+          { value: 0.5, color: 'cyan' },
+          { value: 0.62, color: 'lightblue' },
+          { value: 0.75, color: 'indigo' },
+          { value: 0.9, color: 'violet' },
+          { value: 1, color: 'red' }
+        ],
         legend: true
       }
     },
-    /*
-        xaxis: {
-          min: -10,
-          max: 110
-      },*/
+    xaxis: {
+      show: true,
+      min:   0,
+      max: 100
+    },
     yaxes: [{
+      show: true,
       min: 0,
       max: 50
     }, {
       position: 'right',
       show: false,
       min: -0,
-      max: 50,
+      max: legendMax,
       reserveSpace: true,
       labelWidth: 50
     }, {
       position: 'right',
       show: true,
       min: 0,
-      max: 100
-    }, ],
+      max: legendMax
+    }],
     grid: {
       aboveData: true
     }

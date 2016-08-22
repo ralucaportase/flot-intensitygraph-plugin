@@ -6,7 +6,7 @@
     <link href="example.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="jquery.js"></script>
     <script language="javascript" type="text/javascript" src="jquery.flot.js"></script>
-    <script language="javascript" type="text/javascript" src="jquery.flot.intensitymap.js"></script>
+    <script language="javascript" type="text/javascript" src="jquery.flot.intensitygraph.js"></script>
 </head>
 
 <body style="background-color: white;">
@@ -37,19 +37,18 @@
             data: iMap
         }], {
             series: {
-                intensitymap: {
+                intensitygraph: {
                     active: true,
                     show: true,
                     max: 255,
                     radius: 4,
-                    gradient: {
-                        0: 'white',
-                        0.1: 'red',
-                        0.3: 'orange',
-                        0.6: 'yellow',
-                        1: 'lightgreen',
-                    }
-
+                    gradient: [
+						{ value: 0, color: 'white' },
+						{ value: 0.1, color: 'red' },
+						{ value: 0.3, color: 'orange' },
+						{ value: 0.6, color: 'yellow' },
+						{ value: 1, color: 'lightgreen'}
+                    ]
                 }
             },
             xxxaxis: {
