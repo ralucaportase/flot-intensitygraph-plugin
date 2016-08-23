@@ -3,7 +3,7 @@
 
 describe('An Intensity map', function () {
     'use strict';
-    var $ = NationalInstruments.Globals.jQuery;
+    var $ = jQuery || NationalInstruments.Globals.jQuery;
 
     var plot;
     var placeholder;
