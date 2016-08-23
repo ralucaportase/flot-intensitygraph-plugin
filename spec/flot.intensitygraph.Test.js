@@ -1,7 +1,7 @@
 /* global setFixtures */
 /* brackets-xunit: includes=../lib/cbuffer.js,../jquery.flot.historybuffer.js*,../jquery.flot.js,../jquery.flot.charting.js */
 
-describe('An Intensity map', function () {
+describe('An Intensity graph', function () {
     'use strict';
     var $ = jQuery || NationalInstruments.Globals.jQuery;
 
@@ -32,7 +32,7 @@ describe('An Intensity map', function () {
         });
     });
 
-    it('should draw nothing when the map is empty', function () {
+    it('should draw nothing when the graph is empty', function () {
         plot = $.plot(placeholder, [[[]]], {
             series: {
                 intensitygraph: {
@@ -49,7 +49,7 @@ describe('An Intensity map', function () {
         expect(ctx.fillRect).not.toHaveBeenCalled();
     });
 
-    it('should perfectly fill the border area when the axis are one point long each and the map has a single element', function () {
+    it('should perfectly fill the border area when the axis are one point long each and the graph has a single element', function () {
         plot = $.plot(placeholder, [[[0.5]]], {
             series: {
                 intensitygraph: {
@@ -88,7 +88,7 @@ describe('An Intensity map', function () {
         expect(y2).toBe(plot.height());
     });
 
-    it('should draw the one element map inside the border area', function () {
+    it('should draw the one element graph inside the border area', function () {
         plot = $.plot(placeholder, [[[0.5]]], {
             series: {
                 intensitygraph: {
@@ -148,7 +148,7 @@ describe('An Intensity map', function () {
         expect(ctx.fillRect).not.toHaveBeenCalled();
     });
 
-    it('should draw nothing when the min of Y axis is larger than the map height', function () {
+    it('should draw nothing when the min of Y axis is larger than the graph height', function () {
         plot = $.plot(placeholder, [[[0.5]]], {
             series: {
                 intensitygraph: {
