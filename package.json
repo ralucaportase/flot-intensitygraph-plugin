@@ -1,0 +1,37 @@
+
+{
+  "name": "flot-intensitygraph-plugin",
+  "version": "0.2.0",
+  "description": "Flot intensity graph plugin",
+  "main": "jquery.flot.intensitygraph.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node node_modules/karma/bin/karma start --single-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cipix2000/flot-intensitygraph-plugin.git"
+  },
+  "keywords": [
+    "Flot",
+    "intensity",
+    "map"
+  ],
+  "author": "Ciprian Ceteras",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cipix2000/flot-intensitygraph-plugin/issues"
+  },
+  "homepage": "https://github.com/cipix2000/flot-intensitygraph-plugin",
+  "devDependencies": {
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-phantomjs2-launcher": "^0.5.0",
+    "karma-jasmine-jquery": "^0.1.1",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "jasmine-core": "^2.4.1",
+    "karma-jasmine": "^1.0.2",
+    "karma": "^1.2.0"
+  }
+}
