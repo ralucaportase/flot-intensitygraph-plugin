@@ -6,7 +6,7 @@
     <link href="example.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="jquery.js"></script>
     <script language="javascript" type="text/javascript" src="jquery.flot.js"></script>
-    <script language="javascript" type="text/javascript" src="jquery.flot.intensitymap.js"></script>
+    <script language="javascript" type="text/javascript" src="jquery.flot.intensitygraph.js"></script>
 </head>
 
 <body style="background-color: white;">
@@ -29,35 +29,38 @@
         var w = 101;
         var count = 0;
 
-        for (var i  = 0; i < w; i++)
-          for (var j = 0; j < h; j++)
-              iMap.push([i, j, 0]);
+        for (var i  = 0; i < w; i++) {
+          var column = [];
+          for (var j = 0; j < h; j++) {
+              column.push(0);
+          }
+          iMap.push(column);
+        }
 
         plot = $.plot("#placeholder", [{
             data: iMap
         }], {
             series: {
-                intensitymap: {
+                intensitygraph: {
                     active: true,
                     show: true,
                     max: 255,
                     radius: 4,
-                    gradient: {
-                        0: 'white',
-                        0.1: 'red',
-                        0.3: 'orange',
-                        0.6: 'yellow',
-                        1: 'lightgreen',
-                    }
-
+                    gradient: [
+                        { value: 0, color: 'white' },
+                        { value: 0.1, color: 'red' },
+                        { value: 0.3, color: 'orange' },
+                        { value: 0.6, color: 'yellow' },
+                        { value: 1, color: 'lightgreen'}
+                    ]
                 }
             },
-            xxxaxis: {
-                min: -1,
+            xaxis: {
+                min:   0,
                 max: 102
             },
             yaxis: {
-                min: -1,
+                min:  0,
                 max: 65
             },
             grid: {
@@ -66,15 +69,15 @@
         });
 
         function updateData(data) {
-            if (iMap.length > w * h) {
-                for (var j = 0; j < h; j++) {
-                    iMap.shift();
-                }
+            if (iMap.length > w) {
+                iMap.shift();
             }
 
+            var column = [];
             for (var j = 0; j < h; j++) {
-                iMap.push([count, j, data[j]]);
+                column.push(data[j]);
             }
+            iMap.push(column);
 
             count++;
             axes = plot.getAxes();
