@@ -5,4 +5,4 @@
 
 [Demo: rainbow](https://rawgit.com/ni-kismet/flot-intensitygraph-plugin/master/example.html)
 
-[Demo: sound](https://rawgit.com/mi-kismet/flot-intensitygraph-plugin/master/example4.html)
+[Demo: sound](https://rawgit.com/ni-kismet/flot-intensitygraph-plugin/master/example4.html)
