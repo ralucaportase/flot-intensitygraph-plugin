@@ -17,9 +17,8 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             'jquery.js',
-            'lib/cbuffer.js',
-            'lib/jsverify.standalone.js',
-            'lib/jasmineHelpers2.js',
+            'jquery.canvaswrapper.js',
+            'jquery.colorhelpers.js',
             'jquery.flot.js',
             'jquery*.js',
             'spec/*.Test.js',
