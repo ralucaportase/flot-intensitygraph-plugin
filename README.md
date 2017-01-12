@@ -1,8 +1,8 @@
-# flot-intensitygraph-plugin [![Build Status](https://travis-ci.org/cipix2000/flot-intensitygraph-plugin.svg?branch=master)](https://travis-ci.org/cipix2000/flot-intensitygraph-plugin)
+# flot-intensitygraph-plugin [![Build Status](https://travis-ci.org/ni-kismet/flot-intensitygraph-plugin.svg?branch=master)](https://travis-ci.org/ni-kismet/flot-intensitygraph-plugin)
 
 > An intensity map plugin for flot
 
 
-[Demo: rainbow](https://rawgit.com/cipix2000/flot-intensitygraph-plugin/master/example.html)
+[Demo: rainbow](https://rawgit.com/ni-kismet/flot-intensitygraph-plugin/master/example.html)
 
-[Demo: sound](https://rawgit.com/cipix2000/flot-intensitygraph-plugin/master/example4.html)
+[Demo: sound](https://rawgit.com/mi-kismet/flot-intensitygraph-plugin/master/example4.html)

@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cipix2000/flot-intensitygraph-plugin.git"
+    "url": "https://github.com/ni-kismet/flot-intensitygraph-plugin.git"
   },
   "keywords": [
     "Flot",
@@ -20,11 +20,11 @@
     "map"
   ],
   "author": "Ciprian Ceteras",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cipix2000/flot-intensitygraph-plugin/issues"
+    "url": "https://github.com/ni-kismet/flot-intensitygraph-plugin/issues"
   },
-  "homepage": "https://github.com/cipix2000/flot-intensitygraph-plugin",
+  "homepage": "https://github.com/ni-kismet/flot-intensitygraph-plugin",
   "devDependencies": {
     "karma-firefox-launcher": "^1.0.0",
     "karma-phantomjs2-launcher": "^0.5.0",
