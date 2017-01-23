@@ -74,6 +74,7 @@ function IntensityGraph() {
 
             // push two data points, one with xmin, ymin, the other one with xmax, ymax
             // so the autoscale algorithms can determine the draw size.
+            sDatapoints.points.length = 0;
             sDatapoints.points.push(0, 0);
             sDatapoints.points.push(sData.length || 0, sData[0] ? sData[0].length : 0);
         }
