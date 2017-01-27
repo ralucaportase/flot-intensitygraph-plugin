@@ -223,7 +223,8 @@ function IntensityGraph() {
             if (opt.series.intensitygraph.legend === true) {
                 var colorLegendAxis = opt.yaxes.filter(function (axis) { return axis.position === 'right' && axis.reserveSpace && axis.labelWidth; })[0],
                     colorLegendWidth = colorLegendAxis ? (colorLegendAxis.labelWidth - 10) : 20,
-					x = offset.left + plot.width() + 20,
+					yaxisLabelWidth = !isNaN(opt.yaxes[0].labelWidth) ? opt.yaxes[0].labelWidth : 0,
+					x = (opt.yaxes[0].position === 'right' && opt.yaxes[0].type !== 'colorScaleGradient') ? offset.left + plot.width() + yaxisLabelWidth + 30: offset.left + plot.width() + 20,
 				    gradient = opt.series.intensitygraph.gradient,
                     lowColor = opt.series.intensitygraph.lowColor,
                     highColor = opt.series.intensitygraph.highColor;
