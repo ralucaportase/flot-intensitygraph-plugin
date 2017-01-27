@@ -23,7 +23,7 @@ THE SOFTWARE.
 function IntensityGraph() {
 
     this.pluginName = 'intensitygraph',
-    this.pluginVersion = '0.1';
+    this.pluginVersion = '0.2';
     this.defaultOptions = {
         series: {
             intensitygraph: {
@@ -74,13 +74,14 @@ function IntensityGraph() {
 
             // push two data points, one with xmin, ymin, the other one with xmax, ymax
             // so the autoscale algorithms can determine the draw size.
+            sDatapoints.points.length = 0;
             sDatapoints.points.push(0, 0);
             sDatapoints.points.push(sData.length || 0, sData[0] ? sData[0].length : 0);
         }
 
         // TODO reserve enough space so the map is not drawn outside of the chart.
     }
-	
+
 	var drawLegend = function(ctx, x, y, w, h, gradient, lowColor, highColor) {
 		var highLowColorBoxHeight = 7,
 		  grad = ctx.createLinearGradient(0, y + h, 0, y),
@@ -181,6 +182,10 @@ function IntensityGraph() {
             var scaleX = Math.abs(plot.width() / (serie.xaxis.max - serie.xaxis.min));
             var scaleY = Math.abs(plot.height() / (serie.yaxis.max - serie.yaxis.min));
             var offset = plot.getPlotOffset();
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(offset.left,offset.top, plot.width(),plot.height());
+            ctx.clip();
             if (scaleX > 1 || scaleY > 1) {
                 scaleX = Math.ceil(scaleX);
                 scaleY = Math.ceil(scaleY);
@@ -188,8 +193,8 @@ function IntensityGraph() {
                 halfScaleY = scaleY / 2;
                 left = offset.left + halfScaleX;
                 top = offset.top - halfScaleY;
-                for (i = serie.xaxis.min; i < serie.data.length && i < serie.xaxis.max; i++) {
-                    for (j = serie.yaxis.min; j < serie.data[0].length && j < serie.yaxis.max; j++) {
+                for (i = Math.max(serie.xaxis.min, 0) | 0; i < Math.min(serie.data.length, serie.xaxis.max); i++) {
+                    for (j = Math.max(serie.yaxis.min, 0) | 0; j < Math.min(serie.data[0].length, serie.yaxis.max); j++) {
                         if (0 <= i && i < serie.data.length &&
                             0 <= j && j < serie.data[i].length) {
                             value = serie.data[i][j];
@@ -199,8 +204,8 @@ function IntensityGraph() {
                 }
             } else {
                 var cache = createArray(plot.width() + 1, plot.height() + 1);
-                for (i = serie.xaxis.min; i < serie.data.length && i < serie.xaxis.max; i++) {
-                    for (j = serie.yaxis.min; j < serie.data[0].length && j < serie.yaxis.max; j++) {
+                for (i = Math.max(serie.xaxis.min, 0) | 0; i < Math.min(serie.data.length, serie.xaxis.max); i++) {
+                    for (j = Math.max(serie.yaxis.min, 0) | 0; j < Math.min(serie.data[0].length, serie.yaxis.max); j++) {
                         value = serie.data[i][j];
                         x = Math.round(serie.xaxis.p2c(i));
                         y = Math.round(serie.yaxis.p2c(j));
@@ -213,10 +218,13 @@ function IntensityGraph() {
                 }
             }
 
+            ctx.restore();
+
             if (opt.series.intensitygraph.legend === true) {
                 var colorLegendAxis = opt.yaxes.filter(function (axis) { return axis.position === 'right' && axis.reserveSpace && axis.labelWidth; })[0],
                     colorLegendWidth = colorLegendAxis ? (colorLegendAxis.labelWidth - 10) : 20,
-					x = offset.left + plot.width() + 20,
+					yaxisLabelWidth = !isNaN(opt.yaxes[0].labelWidth) ? opt.yaxes[0].labelWidth : 0,
+					x = (opt.yaxes[0].position === 'right' && opt.yaxes[0].type !== 'colorScaleGradient') ? offset.left + plot.width() + yaxisLabelWidth + 30: offset.left + plot.width() + 20,
 				    gradient = opt.series.intensitygraph.gradient,
                     lowColor = opt.series.intensitygraph.lowColor,
                     highColor = opt.series.intensitygraph.highColor;
@@ -225,12 +233,12 @@ function IntensityGraph() {
 
             function getColor(value) {
                 if (range === 0) {
-                    index = 127; // 0.5 * 255                  
+                    index = 127; // 0.5 * 255
                     return palette[index];
                 } else if (value < serie.intensitygraph.min) {
                     return colorLow
                 } else if (value > serie.intensitygraph.max) {
-                    return colorHigh       
+                    return colorHigh
                 } else {
                     index = Math.round((value - serie.intensitygraph.min) * 255 / range);
                     return palette[index];
@@ -239,8 +247,8 @@ function IntensityGraph() {
 
             function drawPixel(ctx, x, y, value) {
                 var colorRGBA = getColor(value);
-                
-                var colorStr = colorRGBA.slice(colorRGBA.indexOf('(') + 1, colorRGBA.indexOf(')'));    
+
+                var colorStr = colorRGBA.slice(colorRGBA.indexOf('(') + 1, colorRGBA.indexOf(')'));
                 var colorArr = colorStr.split(',');
 
                 id.data[0] = parseInt(colorArr[0], 10);
@@ -264,7 +272,7 @@ function IntensityGraph() {
 };
 
 var intensityGraph = new IntensityGraph();
-	
+
 $.plot.plugins.push({
 	init: intensityGraph.init,
 	options: intensityGraph.defaultOptions,
