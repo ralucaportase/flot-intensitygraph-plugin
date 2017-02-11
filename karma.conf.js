@@ -12,16 +12,24 @@ module.exports = function (config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['jasmine-jquery', 'jasmine'],
+        frameworks: ['jasmine-jquery', 'jasmine', 'requirejs'],
 
         // list of files / patterns to load in the browser
         files: [
-            'jquery.js',
+            // Statically loaded files at the very beginning of testing
             'jquery.canvaswrapper.js',
             'jquery.colorhelpers.js',
             'jquery.flot.js',
-            'jquery*.js',
+
+            // The entry point for testing
+            'requirejs.conf.js',
+
+            // The next pairs are a workaround to allow them being requested
+            //by requirejs and being preprocessed by babel.
+            'jquery.flot.*.js',
+            {pattern: 'jquery.flot.*.js', included: false, served: true, watched: true, nocache: true},
             'spec/*.Test.js',
+            {pattern: 'spec/*.Test.js', included: false, served: true, watched: true, nocache: true},
         ],
 
         // list of files to exclude
@@ -31,6 +39,22 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
+            'jquery.flot.*.js': ['babel'],
+            'spec/*.Test.js': ['babel']
+        },
+
+        babelPreprocessor: {
+            options: {
+                presets: ['es2015'],
+                plugins: ['transform-es2015-modules-amd'],
+                sourceMap: 'inline'
+            },
+            filename: function (file) {
+                return file.originalPath;
+            },
+            sourceFileName: function (file) {
+                return file.originalPath;
+            }
         },
 
         // test results reporter to use

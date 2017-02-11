@@ -18,30 +18,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-(function (global, $) {
 
-function IntensityGraph() {
+export function IntensityGraph() {
 
-    this.pluginName = 'intensitygraph',
-    this.pluginVersion = '0.2';
-    this.defaultOptions = {
-        series: {
-            intensitygraph: {
-                data: [],
-                show: false,
-                lowColor: 'rgba(0,0,0,1)',
-                highColor: 'rgba(255,255,255,1)',
-                min: 0,
-                max: 1
+    var that = this,
+        defaultGradient = [
+            { value: 0, color: 'rgba(0,0,0,1)' },
+            { value: 0.50, color: 'rgba(0,0,255,1)' },
+            { value: 1.0, color: 'rgba(255,255,255,1)' }
+        ],
+        defaultOptions = {
+            series: {
+                intensitygraph: {
+                    data: [],
+                    show: false,
+                    lowColor: 'rgba(0,0,0,1)',
+                    highColor: 'rgba(255,255,255,1)',
+                    min: 0,
+                    max: 1
+                }
             }
-        }
-    };
-
-    var defaultGradient = [
-        { value: 0, color: 'rgba(0,0,0,1)' },
-        { value: 0.50, color: 'rgba(0,0,255,1)' },
-        { value: 1.0, color: 'rgba(255,255,255,1)' }
-    ];
+        };
 
     function extendEmpty(org, ext) {
         for (var i in ext) {
@@ -82,33 +79,32 @@ function IntensityGraph() {
         // TODO reserve enough space so the map is not drawn outside of the chart.
     }
 
-	var drawLegend = function(ctx, x, y, w, h, gradient, lowColor, highColor) {
-		var highLowColorBoxHeight = 7,
-		  grad = ctx.createLinearGradient(0, y + h, 0, y),
-		  first = gradient[0].value, last = gradient[gradient.length - 1].value, offset, i;
-		for (i = 0; i < gradient.length; i++) {
-			offset = (gradient[i].value - first) / (last - first);
-			if (offset >= 0 && offset <= 1.0) {
-				grad.addColorStop(offset, gradient[i].color);
-			}
-		}
+  	function drawLegend(ctx, x, y, w, h, gradient, lowColor, highColor) {
+  		var highLowColorBoxHeight = 7,
+  		  grad = ctx.createLinearGradient(0, y + h, 0, y),
+  		  first = gradient[0].value, last = gradient[gradient.length - 1].value, offset, i;
+  		for (i = 0; i < gradient.length; i++) {
+  			offset = (gradient[i].value - first) / (last - first);
+  			if (offset >= 0 && offset <= 1.0) {
+  				grad.addColorStop(offset, gradient[i].color);
+  			}
+  		}
 
-		ctx.fillStyle = grad;
-		ctx.fillRect(x, y, w, h);
-		ctx.fillStyle = lowColor;
-		ctx.fillRect(x, y + h, w, highLowColorBoxHeight);
-		ctx.strokeStyle = '#000000';
-		ctx.lineWidth = 1;
-		ctx.strokeRect(x - 0.5, y + h + 0.5, w + 1, highLowColorBoxHeight);
-		ctx.fillStyle = highColor;
-		ctx.fillRect(x, y - highLowColorBoxHeight, w, highLowColorBoxHeight);
-		ctx.strokeStyle = '#000000';
-		ctx.lineWidth = 1;
-		ctx.strokeRect(x - 0.5, y - highLowColorBoxHeight + 0.5, w + 1, highLowColorBoxHeight);
-	};
-	this.drawLegend = drawLegend;
+  		ctx.fillStyle = grad;
+  		ctx.fillRect(x, y, w, h);
+  		ctx.fillStyle = lowColor;
+  		ctx.fillRect(x, y + h, w, highLowColorBoxHeight);
+  		ctx.strokeStyle = '#000000';
+  		ctx.lineWidth = 1;
+  		ctx.strokeRect(x - 0.5, y + h + 0.5, w + 1, highLowColorBoxHeight);
+  		ctx.fillStyle = highColor;
+  		ctx.fillRect(x, y - highLowColorBoxHeight, w, highLowColorBoxHeight);
+  		ctx.strokeStyle = '#000000';
+  		ctx.lineWidth = 1;
+  		ctx.strokeRect(x - 0.5, y - highLowColorBoxHeight + 0.5, w + 1, highLowColorBoxHeight);
+  	};
 
-    this.init = function(plot) {
+    function init(plot) {
         var opt = null,
             offset = '7',
             acanvas = null,
@@ -117,7 +113,7 @@ function IntensityGraph() {
 
         function processOptions(plot, options) {
             if (options.series.intensitygraph.show) {
-                extendEmpty(options, this.defaultOptions);
+                extendEmpty(options, that.defaultOptions);
                 if (!options.series.intensitygraph.gradient) {
                     options.series.intensitygraph.gradient = defaultGradient;
                 }
@@ -232,6 +228,7 @@ function IntensityGraph() {
             }
 
             function getColor(value) {
+                var index;
                 if (range === 0) {
                     index = 127; // 0.5 * 255
                     return palette[index];
@@ -269,21 +266,9 @@ function IntensityGraph() {
             };
         };
     };
-};
 
-var intensityGraph = new IntensityGraph();
 
-$.plot.plugins.push({
-	init: intensityGraph.init,
-	options: intensityGraph.defaultOptions,
-	name: intensityGraph.pluginName,
-	version: intensityGraph.pluginVersion
-});
-
-if (typeof module === 'object' && module.exports) {
-	module.exports = IntensityGraph;
-} else {
-	global.IntensityGraph = IntensityGraph;
+    this.defaultOptions = defaultOptions;
+    this.drawLegend = drawLegend;
+    this.init = init;
 }
-
-})(this, jQuery);
