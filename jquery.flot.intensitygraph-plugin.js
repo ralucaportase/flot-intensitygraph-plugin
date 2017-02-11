@@ -20,6 +20,8 @@ THE SOFTWARE.
 
 import * as IntensityGraphCoreModule from 'intensitygraph/jquery.flot.intensitygraph-core';
 
+// This module is causing side effects. Make sure it is included only once.
+
 (function (global, $) {
 
     var pluginName = 'intensitygraph',
