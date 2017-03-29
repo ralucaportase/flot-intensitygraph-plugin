@@ -73,12 +73,11 @@ $(function () {
       }
     },
     xaxis: {
-      show: true,
+      show: true
     },
     yaxis: {
       show: true,
-      min:  0,
-      max: 50
+      autoscale: 'exact'
     },
     grid: {
       aboveData: true

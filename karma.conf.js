@@ -12,8 +12,6 @@ module.exports = function (config) {
 
     var sources = [
         'jquery.js',
-        'jquery.canvaswrapper.js',
-        'jquery.colorhelpers.js',
         'jquery.flot.js'
     ].concat(coverage_sources);
 
@@ -49,7 +47,7 @@ module.exports = function (config) {
             type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
             dir: 'coverage/'
         },
-        
+
         // web server port
         port: 9876,
 

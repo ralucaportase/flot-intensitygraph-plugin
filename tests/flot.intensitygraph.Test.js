@@ -5,11 +5,10 @@ describe('An Intensity graph', function () {
     'use strict';
     var $ = jQuery || NationalInstruments.Globals.jQuery;
 
-    var plot;
-    var placeholder;
+    var fixture, placeholder, plot;
 
     beforeEach(function () {
-        var fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
+        fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
 
         placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
         placeholder.appendTo(fixture);
@@ -59,12 +58,14 @@ describe('An Intensity graph', function () {
             xaxes: [{
                 min: 0,
                 max: 1,
-                show: true
+                show: true,
+                autoscale: 'none'
             }],
             yaxes: [{
                 min: 0,
                 max: 1,
-                show: true
+                show: true,
+                autoscale: 'none'
             }],
             grid: {
                 borderWidth: 1
@@ -98,12 +99,14 @@ describe('An Intensity graph', function () {
             xaxes: [{
                 min: -1,
                 max: 3,
-                show: true
+                show: true,
+                autoscale: 'none'
             }],
             yaxes: [{
                 min: -1,
                 max: 3,
-                show: true
+                show: true,
+                autoscale: 'none'
             }],
             grid: {
                 borderWidth: 1
@@ -136,7 +139,8 @@ describe('An Intensity graph', function () {
             },
             xaxes: [{
                 min: -2,
-                max: -1
+                max: -1,
+                autoscale: 'none'
             }]
         });
 
@@ -157,7 +161,8 @@ describe('An Intensity graph', function () {
             },
             yaxes: [{
                 min: 1000,
-                max: 2000
+                max: 2000,
+                autoscale: 'none'
             }]
         });
 
@@ -168,6 +173,61 @@ describe('An Intensity graph', function () {
 
         expect(ctx.fillRect).not.toHaveBeenCalled();
     });
+
+    it('should draw by point when there are more than 1 column and 1 row per pixel', function (){
+        plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
+            series: {
+                intensitygraph: {
+                    show: true
+                }
+            },
+            xaxes: [{ min: -100, max: 2000, autoscale: 'none'}],
+            yaxes: [{ min: -9.3, max: 3000, autoscale: 'none'}]
+        });
+
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+        spyOn(ctx, 'putImageData');
+
+        plot.draw();
+
+        expect(ctx.putImageData).toHaveBeenCalled();
+    });
+
+    it('should draw by point correctly even when the size of the plot is not an integer value', function (){
+        $(placeholder).css('padding', '10%');
+        $(placeholder).css('width', '89.43px');
+        $(placeholder).css('height', '98.76px');
+
+        plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
+            series: {
+                intensitygraph: {
+                    show: true
+                }
+            },
+            xaxes: [{ min: -100, max: 2000, autoscale: 'none'}],
+            yaxes: [{ min: -9.3, max: 3000, autoscale: 'none'}],
+            plotWidth: 123.45,
+            plotHeight: 234.56
+        });
+
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+        spyOn(ctx, 'putImageData');
+
+        plot.draw();
+
+        expect(ctx.putImageData).toHaveBeenCalled();
+    });
+
+    function createTestMatrix(rows, columns) {
+        var data = [];
+        for(var i = 0; i < columns; i++) {
+            data[i] = [];
+            for(var j = 0; j < rows; j++) {
+                data[i][j] = Math.random();
+            }
+        }
+        return data;
+    }
 
     describe('legend', function () {
 

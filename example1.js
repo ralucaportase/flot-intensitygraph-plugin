@@ -78,12 +78,14 @@ $(function () {
     xaxis: {
       show: true,
       min:   0,
-      max: 100
+      max: 100,
+      autoscale: 'none'
     },
     yaxes: [{
       show: true,
       min: 0,
-      max: 50
+      max: 50,
+      autoscale: 'none'
     }, {
       position: 'right',
       show: false,
