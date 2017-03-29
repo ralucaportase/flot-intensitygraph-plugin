@@ -1,6 +1,6 @@
 {
   "name": "flot-intensitygraph-plugin",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Flot intensity graph plugin",
   "main": "jquery.flot.intensitygraph.js",
   "directories": {
