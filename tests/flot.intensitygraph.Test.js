@@ -276,6 +276,81 @@ describe('An Intensity graph', function () {
 
             expect(ctx.createLinearGradient.calls.first().args).toEqual([0, y + h, 0, y]);
         });
+    });
 
+    describe('colorscale', function() {
+        it('should not overlap yaxis when axis position is right', function(){
+            plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
+                      series: {
+                          intensitygraph: {
+                              show: true,
+                              legend: true
+                          }
+                      },
+                      yaxes: [{
+                          position: 'right',
+                          show: true,
+                          min: 0,
+                          max: 50,
+                          autoscale: 'none'
+                          }, {
+                          position: 'right',
+                          show: true,
+                          min: 0,
+                          max: 50,
+                          type: 'colorScale'
+                          }],
+                  });
+
+            var yaxes = plot.getYAxes(),
+                rightAxisBox = yaxes[0].box,
+                colorscaleBox = yaxes[1].box;
+            expect(rightAxisBox.left + rightAxisBox.width).toBeLessThan(colorscaleBox.left);
+        });
+        it('should not overlap yaxes when multiple yaxes exist', function(){
+            ['left', 'right'].forEach(function(position) {
+                plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
+                      series: {
+                          intensitygraph: {
+                              show: true,
+                              legend: true
+                          }
+                      },
+                      yaxes: [{
+                          position: position,
+                          show: true,
+                          min: 0,
+                          max: 50,
+                          autoscale: 'none'
+                          }, {
+                          position: 'right',
+                          show: true,
+                          min: 0,
+                          max: 50,
+                          autoscale: 'none'
+                          }, {
+                          position: 'right',
+                          show: true,
+                          min: 0,
+                          max: 50,
+                          type: 'colorScale'
+                          },
+                          {
+                          position: position,
+                          show: true,
+                          min: 0,
+                          max: 50,
+                          autoscale: 'none'
+                      }],
+                  });
+
+                var yaxes = plot.getYAxes(),
+                    rightAxisBox1 = yaxes[0].box,
+                    rightAxisBox2 = yaxes[1].box,
+                    colorscaleBox = yaxes[2].box;
+                expect(rightAxisBox1.left + rightAxisBox1.width).toBeLessThan(colorscaleBox.left);
+                expect(rightAxisBox2.left + rightAxisBox2.width).toBeLessThan(colorscaleBox.left);
+              });
+          });
     });
 });

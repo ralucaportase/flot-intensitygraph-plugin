@@ -72,7 +72,8 @@ $(function () {
           { value: 0.9, color: 'violet' },
           { value: 1, color: 'red' }
         ],
-        legend: true
+        legend: true,
+        showTickLabels: 'all'
       }
     },
     xaxis: {
@@ -82,23 +83,18 @@ $(function () {
       autoscale: 'none'
     },
     yaxes: [{
+      position: 'right',
       show: true,
       min: 0,
       max: 50,
       autoscale: 'none'
     }, {
       position: 'right',
-      show: false,
-      min: -0,
-      max: legendMax,
-      reserveSpace: true,
-      labelWidth: 50
-    }, {
-      position: 'right',
       show: true,
-      min: 0,
-      max: legendMax
-    }],
+      autoscale: 'exact',
+      type: 'colorScale'
+    }
+  ],
     grid: {
       aboveData: true
     }
