@@ -1,0 +1,91 @@
+<html>
+<head>
+  <script defer type="text/javascript" src="fps_display.js"></script>
+  <style>
+    canvas {
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: optimize-contrast;
+      -ms-interpolation-mode: nearest-neighbor;
+    }
+  </style>
+</head>
+<body>
+  <a>upscaled:</a><br />
+  <canvas id="theCanvas" width="900" height="900" style="width:700px; height:700px;"></canvas><br />
+  <a>original:</a><br />
+  <canvas id="temp" width="400" height="400" style="width:400px; height:400px;"></canvas><br />
+  <div id="fps"></div>
+  <script>
+    var canvas = document.getElementById('theCanvas'),
+        ctx = canvas.getContext('2d'),
+        temp = document.getElementById('temp'),
+        tempCtx = temp.getContext('2d'),
+        cw = canvas.width, ch = canvas.height,
+        w = temp.width, h = temp.height,
+        s = 1.75,
+        imgData = tempCtx.createImageData(w, h);
+    ctx.imageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+
+    var max = Math.sqrt(h*h + w*w),
+        iMap = [],
+        count = 0;
+    function initData() {
+        iMap = [];
+        for (var i = 0; i < h; i++) {
+          var raw = [];
+          for (var j = 0; j < w; j++) {
+            raw.push(0);
+          }
+          iMap.push(raw);
+        }
+    }
+    function rainbow(i, j, count) {
+        var res = count + Math.sqrt(i*i + j*j);
+        if (res > max)
+          res -=max;
+        return res;
+    }
+    function updateData() {
+      for (var i = 0; i < h; i++) {
+        for (var j = 0; j < w; j++) {
+          iMap[i][j] = rainbow(i, j, count);
+        }
+      }
+      count += 3;
+      if (count > max)
+          count = 0;
+    }
+
+    function run() {
+      updateData();
+      for (var i = 0; i < h; i++) {
+        for (var j = 0; j < w; j++) {
+          var p = 4*i*w + 4*j;
+          imgData.data[p + 0] = 255 * iMap[i][j] / max;
+          imgData.data[p + 1] = 0;
+          imgData.data[p + 2] = 0;
+          imgData.data[p + 3] = 255;
+        }
+      }
+      tempCtx.putImageData(imgData, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.rect(0.5, 0.5, cw-1, ch-1);
+      ctx.stroke();
+      ctx.drawImage(temp, 0, 0, w, h, 100, 100, s * w, s * h);
+
+      var fps_display = document.getElementById('fps');
+      if (fps_display.update) { fps_display.update(w * h); }
+      requestAnimationFrame(run);
+    }
+    initData();
+    updateData();
+    requestAnimationFrame(run);
+  </script>
+</body>
+</html>

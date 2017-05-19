@@ -12,35 +12,13 @@ describe('An Intensity graph', function() {
 
         placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
         placeholder.appendTo(fixture);
-
-        jasmine.addMatchers({
-            toBeGreaterThanOrEqualTo: function() {
-                return {
-                    compare: function(actual, expected) {
-                        return {
-                            pass: typeof actual === 'number' && typeof expected === 'number' && actual >= expected
-                        };
-                    }
-                };
-            },
-            toBeLessThanOrEqualTo: function() {
-                return {
-                    compare: function(actual, expected) {
-                        return {
-                            pass: typeof actual === 'number' && typeof expected === 'number' && actual <= expected
-                        };
-                    }
-                };
-            }
-        });
     });
 
-    it('should draw nothing when the graph is empty', function() {
-        plot = $.plot(placeholder, [
-            [
-                []
-            ]
-        ], {
+    it('should draw nothing when the graph is empty', function () {
+        plot = $.plot(placeholder, [[[]]], {
+            grid: {show: false},
+            xaxis: {show: false},
+            yaxis: {show: false},
             series: {
                 intensitygraph: {
                     show: true
@@ -49,183 +27,309 @@ describe('An Intensity graph', function() {
         });
 
         var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
-        spyOn(ctx, 'fillRect');
 
         plot.draw();
 
-        expect(ctx.fillRect).not.toHaveBeenCalled();
+        var c = getPixelColor(ctx, ctx.canvas.width/2, ctx.canvas.height/2);
+        expect(isClose(c, rgba(0,0,0,0))).toBeTruthy();
     });
 
-    it('should perfectly fill the border area when the axis are one point long each and the graph has a single element', function() {
-        plot = $.plot(placeholder, [
-            [
-                [0.5]
-            ]
-        ], {
+    it('should draw using the coresponding colors of the gradient', function () {
+        plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
+            grid: {show: false},
+            xaxis: {show: false},
+            yaxis: {show: false},
             series: {
                 intensitygraph: {
-                    show: true
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
                 }
-            },
-            xaxes: [{
-                min: 0,
-                max: 1,
-                show: true,
-                autoscale: 'none'
-            }],
-            yaxes: [{
-                min: 0,
-                max: 1,
-                show: true,
-                autoscale: 'none'
-            }],
-            grid: {
-                borderWidth: 1
             }
         });
 
         var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
-        spyOn(ctx, 'fillRect').and.callThrough();
 
         plot.draw();
 
-        expect(ctx.fillRect.calls.count()).toBe(1);
-        var offset = plot.getPlotOffset(),
-            x1 = ctx.fillRect.calls.first().args[0],
-            y1 = ctx.fillRect.calls.first().args[1],
-            x2 = ctx.fillRect.calls.first().args[2],
-            y2 = ctx.fillRect.calls.first().args[3];
-        expect(x1).toBe(offset.left);
-        expect(y1).toBe(offset.top);
-        expect(x2).toBe(plot.width());
-        expect(y2).toBe(plot.height());
+        var c0 = getPixelColor(ctx, 1*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c1 = getPixelColor(ctx, 4*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c2 = getPixelColor(ctx, 7*ctx.canvas.width/8, ctx.canvas.height/2);
+        expect(isClose(c0, rgba(255,0,0,1))).toBeTruthy();
+        expect(isClose(c1, rgba(127,0,127,1))).toBeTruthy();
+        expect(isClose(c2, rgba(0,0,255,1))).toBeTruthy();
     });
 
-    it('should draw the one element graph inside the border area', function() {
-        plot = $.plot(placeholder, [
-            [
-                [0.5]
-            ]
-        ], {
+    it('should draw using the low and high colors', function () {
+        plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
+            grid: {show: false},
+            xaxis: {show: false},
+            yaxis: {show: false},
             series: {
                 intensitygraph: {
-                    show: true
+                    show: true,
+                    min: 0.25,
+                    max: 0.75,
+                    lowColor: 'rgba(0,0,0,1)',
+                    highColor: 'rgba(255,255,255,1)',
+                    gradient: [
+                        { value: 0.25, color: 'red' },
+                        { value: 0.75, color: 'red' }
+                    ]
                 }
-            },
-            xaxes: [{
-                min: -1,
-                max: 3,
-                show: true,
-                autoscale: 'none'
-            }],
-            yaxes: [{
-                min: -1,
-                max: 3,
-                show: true,
-                autoscale: 'none'
-            }],
-            grid: {
-                borderWidth: 1
             }
         });
 
         var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
-        spyOn(ctx, 'fillRect').and.callThrough();
 
         plot.draw();
 
-        expect(ctx.fillRect.calls.count()).toBe(1);
-        var offset = plot.getPlotOffset(),
-            x1 = ctx.fillRect.calls.first().args[0],
-            y1 = ctx.fillRect.calls.first().args[1],
-            x2 = ctx.fillRect.calls.first().args[2],
-            y2 = ctx.fillRect.calls.first().args[3];
-        expect(x1).toBeGreaterThanOrEqualTo(offset.left);
-        expect(y1).toBeGreaterThanOrEqualTo(offset.top);
-        expect(x2).toBeLessThanOrEqualTo(plot.width());
-        expect(y2).toBeLessThanOrEqualTo(plot.height());
+        var c1 = getPixelColor(ctx, 1*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c2 = getPixelColor(ctx, 4*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c3 = getPixelColor(ctx, 7*ctx.canvas.width/8, ctx.canvas.height/2);
+        expect(isClose(c1, rgba(0,0,0,1))).toBeTruthy();
+        expect(isClose(c2, rgba(255,0,0,1))).toBeTruthy();
+        expect(isClose(c3, rgba(255,255,255,1))).toBeTruthy();
     });
 
-    it('should draw nothing when the max of X axis is negative', function() {
-        plot = $.plot(placeholder, [
-            [
-                [0.5]
-            ]
-        ], {
+    it('should draw using the only color of the gradien when only one is specified', function () {
+        plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
+            grid: {show: false},
+            xaxis: {show: false},
+            yaxis: {show: false},
             series: {
                 intensitygraph: {
-                    show: true
+                    show: true,
+                    min: 0,
+                    max: 1,
+                    lowColor: 'rgba(0,0,0,1)',
+                    highColor: 'rgba(255,255,255,1)',
+                    gradient: [
+                        { value: 0.25, color: 'red' },
+                    ]
                 }
-            },
-            xaxes: [{
-                min: -2,
-                max: -1,
-                autoscale: 'none'
-            }]
+            }
         });
 
         var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
-        spyOn(ctx, 'fillRect');
 
         plot.draw();
 
-        expect(ctx.fillRect).not.toHaveBeenCalled();
+        var c1 = getPixelColor(ctx, 1*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c2 = getPixelColor(ctx, 4*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c3 = getPixelColor(ctx, 7*ctx.canvas.width/8, ctx.canvas.height/2);
+        expect(isClose(c1, rgba(255,0,0,1))).toBeTruthy();
+        expect(isClose(c2, rgba(255,0,0,1))).toBeTruthy();
+        expect(isClose(c3, rgba(255,0,0,1))).toBeTruthy();
     });
 
-    it('should draw nothing when the min of Y axis is larger than the graph height', function() {
-        plot = $.plot(placeholder, [
-            [
-                [0.5]
-            ]
-        ], {
+    it('should draw nothing when the limits of the x axis are negative', function () {
+        plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
+            grid: {show: false},
+            xaxis: {show: false, min: -10, max: -5, autoscale: 'none'},
+            yaxis: {show: false},
             series: {
                 intensitygraph: {
-                    show: true
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
                 }
-            },
-            yaxes: [{
-                min: 1000,
-                max: 2000,
-                autoscale: 'none'
-            }]
+            }
         });
 
         var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
-        spyOn(ctx, 'fillRect');
 
         plot.draw();
 
-        expect(ctx.fillRect).not.toHaveBeenCalled();
+        var c0 = getPixelColor(ctx, 1*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c1 = getPixelColor(ctx, 4*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c2 = getPixelColor(ctx, 7*ctx.canvas.width/8, ctx.canvas.height/2);
+        expect(isClose(c0, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c1, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c2, rgba(0,0,0,0))).toBeTruthy();
     });
 
-    it('should draw by point when there are more than 1 column and 1 row per pixel', function() {
-        plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
+    it('should draw nothing when the limits of the x axis are above the data width', function () {
+        plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
+            grid: {show: false},
+            xaxis: {show: false, min: 5, max: 10, autoscale: 'none'},
+            yaxis: {show: false},
             series: {
                 intensitygraph: {
-                    show: true
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
                 }
-            },
-            xaxes: [{
-                min: -100,
-                max: 2000,
-                autoscale: 'none'
-            }],
-            yaxes: [{
-                min: -9.3,
-                max: 3000,
-                autoscale: 'none'
-            }]
+            }
         });
 
         var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
-        spyOn(ctx, 'putImageData');
 
         plot.draw();
 
-        expect(ctx.putImageData).toHaveBeenCalled();
+        var c0 = getPixelColor(ctx, 1*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c1 = getPixelColor(ctx, 4*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c2 = getPixelColor(ctx, 7*ctx.canvas.width/8, ctx.canvas.height/2);
+        expect(isClose(c0, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c1, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c2, rgba(0,0,0,0))).toBeTruthy();
     });
 
-    it('should draw by point correctly even when the size of the plot is not an integer value', function() {
+    it('should draw nothing when the limits of the y axis are negative', function () {
+        plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
+            grid: {show: false},
+            xaxis: {show: false},
+            yaxis: {show: false, min: -10, max: -5, autoscale: 'none'},
+            series: {
+                intensitygraph: {
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
+                }
+            }
+        });
+
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+
+        plot.draw();
+
+        var c0 = getPixelColor(ctx, 1*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c1 = getPixelColor(ctx, 4*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c2 = getPixelColor(ctx, 7*ctx.canvas.width/8, ctx.canvas.height/2);
+        expect(isClose(c0, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c1, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c2, rgba(0,0,0,0))).toBeTruthy();
+    });
+
+    it('should draw nothing when the limits of the y axis are above the data height', function () {
+        plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
+            grid: {show: false},
+            xaxis: {show: false},
+            yaxis: {show: false, min: 5, max: 10, autoscale: 'none'},
+            series: {
+                intensitygraph: {
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
+                }
+            }
+        });
+
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+
+        plot.draw();
+
+        var c0 = getPixelColor(ctx, 1*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c1 = getPixelColor(ctx, 4*ctx.canvas.width/8, ctx.canvas.height/2);
+        var c2 = getPixelColor(ctx, 7*ctx.canvas.width/8, ctx.canvas.height/2);
+        expect(isClose(c0, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c1, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c2, rgba(0,0,0,0))).toBeTruthy();
+    });
+
+    it('should draw a piece of data when the axis limits are not perfectly matching the data width and height 1', function () {
+        /*
+                        y  +--------------------------------+
+                           |                                |
+                           |                   view         |
+                           |                                |
+                +--------------------------------+          |
+                |          |          |          |          |
+                |          |          |   blue   |          |
+                |          |   c00    |   c01    |   c02    |
+                +----------O--------------------------------+
+                |          |          |          |
+                |   red    |          |          |          x
+                |          |          |          |
+                +--------------------------------+
+        */
+        plot = $.plot(placeholder, [[[0.0, 0.6],
+                                     [0.2, 0.8],
+                                     [0.4, 1.0]]], {
+            grid: {show: true},
+            xaxis: {show: true, min: 1, max: 4, autoscale: 'none'},
+            yaxis: {show: true, min: 1, max: 3, autoscale: 'none'},
+            series: {
+                intensitygraph: {
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
+                }
+            }
+        });
+
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+
+        plot.draw();
+
+        var c00 = getPixelColor(ctx, 1*ctx.canvas.width/8, 2*ctx.canvas.height/3);
+        var c01 = getPixelColor(ctx, 4*ctx.canvas.width/8, 2*ctx.canvas.height/3);
+        var c02 = getPixelColor(ctx, 7*ctx.canvas.width/8, 2*ctx.canvas.height/3);
+        expect(isClose(c00, rgba(1*255/5,0,4*255/5,1))).toBeTruthy();
+        expect(isClose(c01, rgba(0*255/5,0,5*255/5,1))).toBeTruthy();
+        expect(isClose(c02, rgba(0,0,0,0))).toBeTruthy();
+    });
+
+    it('should draw a piece of data when the axis limits are not perfectly matching the data width and height 2', function () {
+        /*
+                           +--------------------------------+
+                           |          |          |          |
+                           |          |          |   blue   |
+                           |          |          |          |
+            y   +-------------------------------------------+
+                |          |          |          |          |
+                |          |   red    |          |          |
+                |   c10    |   c11    |   c12    |          |
+                |          +--------------------------------+
+                |                                |
+                |      view                      |
+                |                                |
+                O--------------------------------+
+
+                                                 x
+        */
+        plot = $.plot(placeholder, [[[0.0, 0.6],
+                                     [0.2, 0.8],
+                                     [0.4, 1.0]]], {
+            grid: {show: true},
+            xaxis: {show: true, min: -1, max: 2, autoscale: 'none'},
+            yaxis: {show: true, min: -1, max: 1, autoscale: 'none'},
+            series: {
+                intensitygraph: {
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
+                }
+            }
+        });
+
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+
+        plot.draw();
+
+        var c10 = getPixelColor(ctx, 1*ctx.canvas.width/8, 1*ctx.canvas.height/3);
+        var c11 = getPixelColor(ctx, 4*ctx.canvas.width/8, 1*ctx.canvas.height/3);
+        var c12 = getPixelColor(ctx, 7*ctx.canvas.width/8, 1*ctx.canvas.height/3);
+        expect(isClose(c10, rgba(0,0,0,0))).toBeTruthy();
+        expect(isClose(c11, rgba(5*255/5,0,0*255/5,1))).toBeTruthy();
+        expect(isClose(c12, rgba(4*255/5,0,1*255/5,1))).toBeTruthy();
+    });
+
+    it('should not throw when the size of the plot is not an integer value', function (){
         $(placeholder).css('padding', '10%');
         $(placeholder).css('width', '89.43px');
         $(placeholder).css('height', '98.76px');
@@ -237,11 +341,13 @@ describe('An Intensity graph', function() {
                 }
             },
             xaxes: [{
+                show: false,
                 min: -100,
                 max: 2000,
                 autoscale: 'none'
             }],
             yaxes: [{
+                show: false,
                 min: -9.3,
                 max: 3000,
                 autoscale: 'none'
@@ -250,20 +356,167 @@ describe('An Intensity graph', function() {
             plotHeight: 234.56
         });
 
-        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
-        spyOn(ctx, 'putImageData');
-
-        plot.draw();
-
-        expect(ctx.putImageData).toHaveBeenCalled();
+        var run = function() {
+            var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+            plot.draw();
+        }
+        expect(run).not.toThrow();
     });
 
-    function createTestMatrix(rows, columns) {
+    [false, true].forEach(function(onlyData, index) {
+        it('should fill the entire area when the axes limits are non integers and the data is zoomed in ' + (index+1), function () {
+            plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
+                grid: {show: !onlyData},
+                xaxis: {show: !onlyData, min: 1.123, max: 3.456, autoscale: 'none'},
+                yaxis: {show: !onlyData, min: 2.345, max: 5.678, autoscale: 'none'},
+                series: {
+                    intensitygraph: {
+                        show: true,
+                        gradient: [
+                            { value: 0, color: 'rgba(255,0,0,0.5)' },
+                            { value: 1, color: 'rgba(0,0,255,0.5)' }
+                        ]
+                    }
+                }
+            });
+
+            var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+            plot.draw();
+
+            // check the color of random pixels not to be empty
+            // avoid the border and axes when they are visible
+            var steps = 10, start = !onlyData ? 2 : 0, stop = !onlyData ? steps - 2 : 0;
+            for (var i = start; i < stop; i++) {
+                for (var j = start; j < stop; j++) {
+                    var c = getPixelColor(ctx, i * ctx.canvas.width / steps, j * ctx.canvas.height / steps);
+                    expect(isClose(c, rgba(0,0,0,0))).toBeFalsy();
+                }
+            }
+        });
+    });
+
+    it('should draw using the higher color when there are more points per pixel', function () {
+        /*
+            0101010101
+            1010101010              11111
+            0101010101      =>      11111
+            1010101010              11111
+            0101010101
+        */
+        plot = $.plot(placeholder, [createPatternTestMatrix(300, 200)], {
+            grid: {show: true},
+            xaxis: {show: true, min: -600, max: 900, autoscale: 'none'},
+            yaxis: {show: true, min: -500, max: 700, autoscale: 'none'},
+            series: {
+                intensitygraph: {
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
+                }
+            }
+        });
+
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+        plot.draw();
+
+        // check the color of random sequence of pixels in the center of the canvas
+        // there are so many points squeezed per pixel that the drawing area should be blue
+        for (var i = 0; i < 5; i++) {
+            for (var j = 0; j < 5; j++) {
+                var c = getPixelColor(ctx, ctx.canvas.width / 2 + i, ctx.canvas.height / 2 + j);
+                expect(isClose(c, rgba(0,0,255,1))).toBeTruthy();
+            }
+        }
+    });
+
+    it('should draw using the higher color when there are more points per pixel 2', function () {
+        /*
+            000000000000
+            011111111110              1xxxxx
+            010000000010              10000x
+            010000000010      =>      10000x
+            010000000010              10000x
+            011111111110              111111
+            000000000000
+
+            0 = red, 1 = blue, x = unknown
+        */
+        plot = $.plot(placeholder, [createBorderTestMatrix(2000, 2000)], {
+            grid: {show: false},
+            xaxis: {show: false, autoscale: 'exact'},
+            yaxis: {show: false, autoscale: 'exact'},
+            series: {
+                intensitygraph: {
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
+                }
+            }
+        });
+
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+        plot.draw();
+
+        var insideColor = getPixelColor(ctx, ctx.canvas.width / 2, ctx.canvas.height / 2),
+            leftBorderColor = getPixelColor(ctx, 0, ctx.canvas.height / 2),
+            bottomBorderColor = getPixelColor(ctx, ctx.canvas.width / 2, ctx.canvas.height - 1);
+        expect(isClose(insideColor, rgba(255,0,0,1))).toBeTruthy();
+        expect(isClose(leftBorderColor, rgba(0,0,255,1))).toBeTruthy();
+        expect(isClose(bottomBorderColor, rgba(0,0,255,1))).toBeTruthy();
+    });
+
+    function getPixelColor(ctx, x, y) {
+        return ctx.getImageData(x, y, 1, 1).data;
+    }
+
+    function rgba(r, g, b, a) {
+        return [r, g, b, a * 255];
+    }
+
+    function isClose(c1, c2) {
+        var tolerance = 2,
+            close = c2
+                .map(function(v, i) { return Math.abs(v - c1[i]); })
+                .every(function(d) { return d <= tolerance; });
+        return close;
+    }
+
+    function createTestMatrix(columns, rows) {
         var data = [];
         for (var i = 0; i < columns; i++) {
             data[i] = [];
             for (var j = 0; j < rows; j++) {
                 data[i][j] = Math.random();
+            }
+        }
+        return data;
+    }
+
+    function createPatternTestMatrix(columns, rows) {
+        var data = [];
+        for(var i = 0; i < columns; i++) {
+            data[i] = [];
+            for(var j = 0; j < rows; j++) {
+                data[i][j] = (i + j) % 2;
+            }
+        }
+        return data;
+    }
+
+    function createBorderTestMatrix(columns, rows) {
+        var data = [], d = 1;
+        for(var i = 0; i < columns; i++) {
+            data[i] = [];
+            for(var j = 0; j < rows; j++) {
+                if (i === d || i === columns - 1 - d || j === d || j === rows - 1 - d) {
+                    data[i][j] = 1;
+                } else {
+                    data[i][j] = 0;
+                }
             }
         }
         return data;
