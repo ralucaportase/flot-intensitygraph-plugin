@@ -22,6 +22,35 @@ THE SOFTWARE.
 // Static Public Variables
 IntensityGraph.ColorscaleType = 'colorScale';
 
+var drawLegend = function(ctx, x, y, w, h, gradient, lowColor, highColor) {
+    var highLowColorBoxHeight = 7,
+      grad = ctx.createLinearGradient(0, y + h, 0, y),
+      first = gradient[0].value, last = gradient[gradient.length - 1].value, offset, i;
+    for (i = 0; i < gradient.length; i++) {
+        offset = (gradient[i].value - first) / (last - first);
+        if (offset >= 0 && offset <= 1.0) {
+            grad.addColorStop(offset, gradient[i].color);
+        }
+    }
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = lowColor;
+    ctx.fillRect(x, y + h, w, highLowColorBoxHeight);
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 0.5, y + h + 0.5, w + 1, highLowColorBoxHeight);
+    ctx.fillStyle = highColor;
+    ctx.fillRect(x, y - highLowColorBoxHeight, w, highLowColorBoxHeight);
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 0.5, y - highLowColorBoxHeight + 0.5, w + 1, highLowColorBoxHeight);
+};
+
+function isColorScale(axis) {
+    return axis.options.type === IntensityGraph.ColorscaleType;
+}
+
 function IntensityGraph() {
     this.pluginName = 'intensitygraph';
     this.pluginVersion = '0.2';
@@ -39,12 +68,11 @@ function IntensityGraph() {
     };
 
     var defaultGradient = [
-        { value: 0, color: 'rgba(0,0,0,1)' },
-        { value: 0.50, color: 'rgba(0,0,255,1)' },
-        { value: 1.0, color: 'rgba(255,255,255,1)' }
+        { value: 0, color: '#3182bd' },
+        { value: 0.50, color: '#9ecae1' },
+        { value: 1.0, color: '#deebf7' }
     ];
     var defaultBoxPosition = { centerX: 20, centerY: 0 };
-    var COLORSCALE_TYPE = IntensityGraph.ColorscaleType;
 
     function extendEmpty(org, ext) {
         for (var i in ext) {
@@ -86,38 +114,6 @@ function IntensityGraph() {
         // TODO reserve enough space so the map is not drawn outside of the chart.
     }
 
-    var drawLegend = function(ctx, x, y, w, h, gradient, lowColor, highColor) {
-		var highLowColorBoxHeight = 7,
-		  grad = ctx.createLinearGradient(0, y + h, 0, y),
-		  first = gradient[0].value, last = gradient[gradient.length - 1].value, offset, i;
-		for (i = 0; i < gradient.length; i++) {
-			offset = (gradient[i].value - first) / (last - first);
-			if (offset >= 0 && offset <= 1.0) {
-				grad.addColorStop(offset, gradient[i].color);
-			}
-		}
-
-		ctx.fillStyle = grad;
-		ctx.fillRect(x, y, w, h);
-		ctx.fillStyle = lowColor;
-		ctx.fillRect(x, y + h, w, highLowColorBoxHeight);
-		ctx.strokeStyle = '#000000';
-		ctx.lineWidth = 1;
-		ctx.strokeRect(x - 0.5, y + h + 0.5, w + 1, highLowColorBoxHeight);
-		ctx.fillStyle = highColor;
-		ctx.fillRect(x, y - highLowColorBoxHeight, w, highLowColorBoxHeight);
-		ctx.strokeStyle = '#000000';
-		ctx.lineWidth = 1;
-		ctx.strokeRect(x - 0.5, y - highLowColorBoxHeight + 0.5, w + 1, highLowColorBoxHeight);
-	};
-
-    this.drawLegend = drawLegend;
-    this.isColorScale = isColorScale;
-
-    function isColorScale(axis) {
-        return axis.options.type === COLORSCALE_TYPE;
-    }
-
     this.init = function(plot) {
         var opt = null,
             offset = '7',
@@ -133,7 +129,7 @@ function IntensityGraph() {
                 }
 
                 var yaxes = plot.getYAxes(),
-                    colorScaleAxis = yaxes.filter(function (axis) { return isColorScale(axis); })[0];
+                    colorScaleAxis = yaxes.filter(function (axis) { return IntensityGraph.prototype.isColorScale(axis); })[0];
                 if (colorScaleAxis && colorScaleAxis.boxPosition.centerX === 0) {
                     colorScaleAxis.boxPosition = defaultBoxPosition;
                 }
@@ -235,15 +231,15 @@ function IntensityGraph() {
 
             ctx.restore();
 
-            if (opt.series.intensitygraph.legend === true) {
-                var yaxes = plot.getYAxes(),
-                    colorScaleAxis = yaxes.filter(function (axis) { return isColorScale(axis); })[0],
-                    colorScaleGradientWidth = 10,
-                    x = colorScaleAxis ? colorScaleAxis.box.left + colorScaleGradientWidth : offset.left + plot.width() + 20,
-                    gradient = opt.series.intensitygraph.gradient,
-                    lowColor = opt.series.intensitygraph.lowColor,
-                    highColor = opt.series.intensitygraph.highColor;
-                drawLegend(ctx, x, offset.top, colorScaleGradientWidth, plot.height(), gradient, lowColor, highColor);
+            var yaxes = plot.getYAxes(),
+                colorScaleAxis = yaxes.filter(function (axis) { return isColorScale(axis); })[0],
+                colorScaleGradientWidth = 10,
+                x = colorScaleAxis  && colorScaleAxis.show ? colorScaleAxis.box.left + colorScaleGradientWidth : offset.left + plot.width() + 20,
+                gradient = opt.series.intensitygraph.gradient,
+                lowColor = opt.series.intensitygraph.lowColor,
+                highColor = opt.series.intensitygraph.highColor;
+            if (colorScaleAxis && colorScaleAxis.show) {
+                IntensityGraph.prototype.drawLegend(ctx, x, offset.top, colorScaleGradientWidth, plot.height(), gradient, lowColor, highColor);
             }
 
             function getColor(value) {
@@ -283,9 +279,11 @@ function IntensityGraph() {
                 ctx.fillRect(xb, yb, scaleX, scaleY);
             };
         };
-
     };
 };
+
+IntensityGraph.prototype.drawLegend = drawLegend;
+IntensityGraph.prototype.isColorScale = isColorScale;
 
 var intensityGraph = new IntensityGraph();
 

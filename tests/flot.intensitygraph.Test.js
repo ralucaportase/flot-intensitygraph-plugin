@@ -1,38 +1,46 @@
 /* global setFixtures */
 /* brackets-xunit: includes=../lib/cbuffer.js,../jquery.flot.historybuffer.js*,../jquery.flot.js,../jquery.flot.charting.js */
 
-describe('An Intensity graph', function () {
+describe('An Intensity graph', function() {
     'use strict';
     var $ = jQuery || NationalInstruments.Globals.jQuery;
 
     var fixture, placeholder, plot;
 
-    beforeEach(function () {
+    beforeEach(function() {
         fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
 
         placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
         placeholder.appendTo(fixture);
 
         jasmine.addMatchers({
-            toBeGreaterThanOrEqualTo: function () {
+            toBeGreaterThanOrEqualTo: function() {
                 return {
-                    compare: function (actual, expected) {
-                        return { pass: typeof actual === 'number' && typeof expected === 'number' && actual >= expected };
+                    compare: function(actual, expected) {
+                        return {
+                            pass: typeof actual === 'number' && typeof expected === 'number' && actual >= expected
+                        };
                     }
                 };
             },
-            toBeLessThanOrEqualTo: function () {
+            toBeLessThanOrEqualTo: function() {
                 return {
-                    compare: function (actual, expected) {
-                        return { pass: typeof actual === 'number' && typeof expected === 'number' && actual <= expected };
+                    compare: function(actual, expected) {
+                        return {
+                            pass: typeof actual === 'number' && typeof expected === 'number' && actual <= expected
+                        };
                     }
                 };
             }
         });
     });
 
-    it('should draw nothing when the graph is empty', function () {
-        plot = $.plot(placeholder, [[[]]], {
+    it('should draw nothing when the graph is empty', function() {
+        plot = $.plot(placeholder, [
+            [
+                []
+            ]
+        ], {
             series: {
                 intensitygraph: {
                     show: true
@@ -48,8 +56,12 @@ describe('An Intensity graph', function () {
         expect(ctx.fillRect).not.toHaveBeenCalled();
     });
 
-    it('should perfectly fill the border area when the axis are one point long each and the graph has a single element', function () {
-        plot = $.plot(placeholder, [[[0.5]]], {
+    it('should perfectly fill the border area when the axis are one point long each and the graph has a single element', function() {
+        plot = $.plot(placeholder, [
+            [
+                [0.5]
+            ]
+        ], {
             series: {
                 intensitygraph: {
                     show: true
@@ -89,8 +101,12 @@ describe('An Intensity graph', function () {
         expect(y2).toBe(plot.height());
     });
 
-    it('should draw the one element graph inside the border area', function () {
-        plot = $.plot(placeholder, [[[0.5]]], {
+    it('should draw the one element graph inside the border area', function() {
+        plot = $.plot(placeholder, [
+            [
+                [0.5]
+            ]
+        ], {
             series: {
                 intensitygraph: {
                     show: true
@@ -130,8 +146,12 @@ describe('An Intensity graph', function () {
         expect(y2).toBeLessThanOrEqualTo(plot.height());
     });
 
-    it('should draw nothing when the max of X axis is negative', function () {
-        plot = $.plot(placeholder, [[[0.5]]], {
+    it('should draw nothing when the max of X axis is negative', function() {
+        plot = $.plot(placeholder, [
+            [
+                [0.5]
+            ]
+        ], {
             series: {
                 intensitygraph: {
                     show: true
@@ -152,8 +172,12 @@ describe('An Intensity graph', function () {
         expect(ctx.fillRect).not.toHaveBeenCalled();
     });
 
-    it('should draw nothing when the min of Y axis is larger than the graph height', function () {
-        plot = $.plot(placeholder, [[[0.5]]], {
+    it('should draw nothing when the min of Y axis is larger than the graph height', function() {
+        plot = $.plot(placeholder, [
+            [
+                [0.5]
+            ]
+        ], {
             series: {
                 intensitygraph: {
                     show: true
@@ -174,15 +198,23 @@ describe('An Intensity graph', function () {
         expect(ctx.fillRect).not.toHaveBeenCalled();
     });
 
-    it('should draw by point when there are more than 1 column and 1 row per pixel', function (){
+    it('should draw by point when there are more than 1 column and 1 row per pixel', function() {
         plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
             series: {
                 intensitygraph: {
                     show: true
                 }
             },
-            xaxes: [{ min: -100, max: 2000, autoscale: 'none'}],
-            yaxes: [{ min: -9.3, max: 3000, autoscale: 'none'}]
+            xaxes: [{
+                min: -100,
+                max: 2000,
+                autoscale: 'none'
+            }],
+            yaxes: [{
+                min: -9.3,
+                max: 3000,
+                autoscale: 'none'
+            }]
         });
 
         var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
@@ -193,7 +225,7 @@ describe('An Intensity graph', function () {
         expect(ctx.putImageData).toHaveBeenCalled();
     });
 
-    it('should draw by point correctly even when the size of the plot is not an integer value', function (){
+    it('should draw by point correctly even when the size of the plot is not an integer value', function() {
         $(placeholder).css('padding', '10%');
         $(placeholder).css('width', '89.43px');
         $(placeholder).css('height', '98.76px');
@@ -204,8 +236,16 @@ describe('An Intensity graph', function () {
                     show: true
                 }
             },
-            xaxes: [{ min: -100, max: 2000, autoscale: 'none'}],
-            yaxes: [{ min: -9.3, max: 3000, autoscale: 'none'}],
+            xaxes: [{
+                min: -100,
+                max: 2000,
+                autoscale: 'none'
+            }],
+            yaxes: [{
+                min: -9.3,
+                max: 3000,
+                autoscale: 'none'
+            }],
             plotWidth: 123.45,
             plotHeight: 234.56
         });
@@ -220,34 +260,43 @@ describe('An Intensity graph', function () {
 
     function createTestMatrix(rows, columns) {
         var data = [];
-        for(var i = 0; i < columns; i++) {
+        for (var i = 0; i < columns; i++) {
             data[i] = [];
-            for(var j = 0; j < rows; j++) {
+            for (var j = 0; j < rows; j++) {
                 data[i][j] = Math.random();
             }
         }
         return data;
     }
 
-    describe('legend', function () {
+    describe('legend', function() {
 
         var intensityGraph = new window.IntensityGraph();
 
-        it('should add all the colors to the gradient according to the values of the markers', function () {
+        it('should add all the colors to the gradient according to the values of the markers', function() {
             var addColorStop = jasmine.createSpy(),
                 ctx = {
-                fillRect: jasmine.createSpy(),
-                strokeRect: jasmine.createSpy(),
-                createLinearGradient: function () {
-                    return {
-                        addColorStop: addColorStop
-                    };
-                }
-            };
+                    fillRect: jasmine.createSpy(),
+                    strokeRect: jasmine.createSpy(),
+                    createLinearGradient: function() {
+                        return {
+                            addColorStop: addColorStop
+                        };
+                    }
+                };
 
-            var marker1 = { value: 0, color: 'red' },
-                marker2 = { value: 40, color: 'yellow' },
-                marker3 = { value: 100, color: 'green' };
+            var marker1 = {
+                    value: 0,
+                    color: 'red'
+                },
+                marker2 = {
+                    value: 40,
+                    color: 'yellow'
+                },
+                marker3 = {
+                    value: 100,
+                    color: 'green'
+                };
             intensityGraph.drawLegend(ctx, 1, 1, 10, 50, [marker1, marker2, marker3], 'black', 'white');
 
             expect(addColorStop.calls.count()).toBe(3);
@@ -256,11 +305,11 @@ describe('An Intensity graph', function () {
             expect(addColorStop.calls.argsFor(2)).toEqual([1.0, 'green']);
         });
 
-        it('should use a gradient that perfectly fills the hole rectangle upside down', function () {
+        it('should use a gradient that perfectly fills the whole rectangle upside down', function() {
             var ctx = {
                 fillRect: jasmine.createSpy(),
                 strokeRect: jasmine.createSpy(),
-                createLinearGradient: function () {
+                createLinearGradient: function() {
                     return {
                         addColorStop: jasmine.createSpy()
                     };
@@ -272,77 +321,83 @@ describe('An Intensity graph', function () {
                 y = 1,
                 w = 10,
                 h = 50;
-            intensityGraph.drawLegend(ctx, x, y, w, h, [{ value: 0, color: 'red' }, { value: 100, color: 'green' }], 'black', 'white');
+            intensityGraph.drawLegend(ctx, x, y, w, h, [{
+                value: 0,
+                color: 'red'
+            }, {
+                value: 100,
+                color: 'green'
+            }], 'black', 'white');
 
             expect(ctx.createLinearGradient.calls.first().args).toEqual([0, y + h, 0, y]);
         });
     });
 
     describe('colorscale', function() {
-        it('should not overlap yaxis when axis position is right', function(){
+        it('should not overlap yaxis when axis position is right', function() {
             plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
-                      series: {
-                          intensitygraph: {
-                              show: true,
-                              legend: true
-                          }
-                      },
-                      yaxes: [{
-                          position: 'right',
-                          show: true,
-                          min: 0,
-                          max: 50,
-                          autoscale: 'none'
-                          }, {
-                          position: 'right',
-                          show: true,
-                          min: 0,
-                          max: 50,
-                          type: 'colorScale'
-                          }],
-                  });
+                series: {
+                    intensitygraph: {
+                        show: true
+                    }
+                },
+                yaxes: [{
+                    position: 'right',
+                    show: true,
+                    min: 0,
+                    max: 50,
+                    autoscale: 'none'
+                }, {
+                    position: 'right',
+                    show: true,
+                    min: 0,
+                    max: 50,
+                    type: 'colorScale'
+                }],
+            });
 
             var yaxes = plot.getYAxes(),
                 rightAxisBox = yaxes[0].box,
                 colorscaleBox = yaxes[1].box;
             expect(rightAxisBox.left + rightAxisBox.width).toBeLessThan(colorscaleBox.left);
         });
-        it('should not overlap yaxes when multiple yaxes exist', function(){
+
+        it('should not overlap yaxes when multiple yaxes exist', function() {
             ['left', 'right'].forEach(function(position) {
                 plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
-                      series: {
-                          intensitygraph: {
-                              show: true,
-                              legend: true
-                          }
-                      },
-                      yaxes: [{
-                          position: position,
-                          show: true,
-                          min: 0,
-                          max: 50,
-                          autoscale: 'none'
-                          }, {
-                          position: 'right',
-                          show: true,
-                          min: 0,
-                          max: 50,
-                          autoscale: 'none'
-                          }, {
-                          position: 'right',
-                          show: true,
-                          min: 0,
-                          max: 50,
-                          type: 'colorScale'
-                          },
-                          {
-                          position: position,
-                          show: true,
-                          min: 0,
-                          max: 50,
-                          autoscale: 'none'
-                      }],
-                  });
+                    series: {
+                        intensitygraph: {
+                            show: true
+                        }
+                    },
+                    yaxes: [{
+                            position: position,
+                            show: true,
+                            min: 0,
+                            max: 50,
+                            autoscale: 'none'
+                        }, {
+                            position: 'right',
+                            show: true,
+                            min: 0,
+                            max: 50,
+                            autoscale: 'none'
+                        }, {
+                            position: 'right',
+                            show: true,
+                            min: 0,
+                            max: 50,
+                            type: 'colorScale'
+                        },
+                        {
+                            position: position,
+                            show: true,
+                            min: 0,
+                            max: 50,
+                            autoscale: 'none'
+                        }
+                    ],
+                });
 
                 var yaxes = plot.getYAxes(),
                     rightAxisBox1 = yaxes[0].box,
@@ -350,7 +405,63 @@ describe('An Intensity graph', function () {
                     colorscaleBox = yaxes[2].box;
                 expect(rightAxisBox1.left + rightAxisBox1.width).toBeLessThan(colorscaleBox.left);
                 expect(rightAxisBox2.left + rightAxisBox2.width).toBeLessThan(colorscaleBox.left);
-              });
-          });
+            });
+        });
+
+        it('should call drawLegend when a visible colorScale is attached', function() {
+            var spy = spyOn(window.IntensityGraph.prototype, 'drawLegend').and.callThrough();
+            plot = $.plot(placeholder, [createTestMatrix(1, 1)], {
+                series: {
+                    intensitygraph: {
+                        show: true
+                    }
+                },
+                yaxes: [{
+                    position: 'right',
+                    show: true,
+                    min: 0,
+                    max: 50,
+                    type: 'colorScale'
+                }]
+            });
+
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it('should not call drawLegend when a hidden colorScale is attached', function() {
+            var spy = spyOn(window.IntensityGraph.prototype, 'drawLegend').and.callThrough();
+            plot = $.plot(placeholder, [createTestMatrix(1, 1)], {
+                series: {
+                    intensitygraph: {
+                        show: true
+                    }
+                },
+                yaxes: [{
+                    position: 'right',
+                    show: false,
+                    min: 0,
+                    max: 50,
+                    type: 'colorScale'
+                }]
+            });
+
+            expect(spy).not.toHaveBeenCalled();
+        });
+
+
+        it('should not call drawLegend when a colorScale isn\'t attached', function() {
+            var spy = spyOn(window.IntensityGraph.prototype, 'drawLegend').and.callThrough();
+            plot = $.plot(placeholder, [createTestMatrix(1, 1)], {
+                series: {
+                    intensitygraph: {
+                        show: true
+                    }
+                },
+                yaxes: []
+            });
+
+            expect(spy).not.toHaveBeenCalled();
+        });
+
     });
 });
