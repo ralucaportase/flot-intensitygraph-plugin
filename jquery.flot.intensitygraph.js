@@ -68,23 +68,12 @@ function IntensityGraph() {
     };
 
     var defaultGradient = [
-        { value: 0, color: '#3182bd' },
-        { value: 0.50, color: '#9ecae1' },
-        { value: 1.0, color: '#deebf7' }
-    ];
-    var defaultBoxPosition = { centerX: 20, centerY: 0 };
+            { value: 0, color: '#3182bd' },
+            { value: 0.50, color: '#9ecae1' },
+            { value: 1.0, color: '#deebf7' }
+        ],
+        defaultBoxPosition = { centerX: 20, centerY: 0 };
 
-    function extendEmpty(org, ext) {
-        for (var i in ext) {
-            if (!org[i]) {
-                org[i] = ext[i];
-            } else {
-                if (typeof ext[i] === 'object') {
-                    extendEmpty(org[i], ext[i]);
-                }
-            }
-        }
-    };
 
     function processRawData(plot, s, sData, sDatapoints) {
         var opts = plot.getOptions();
@@ -102,16 +91,12 @@ function IntensityGraph() {
     }
 
     this.init = function(plot) {
-        var opt = null,
-            offset = '7',
-            acanvas = null,
-            series = null,
-            tempCanvas, tempImageData;
+        var opt = null, tempCanvas, tempImageData;
+
         plot.hooks.processOptions.push(processOptions);
 
         function processOptions(plot, options) {
             if (options.series.intensitygraph.show) {
-                extendEmpty(options, this.defaultOptions);
                 if (!options.series.intensitygraph.gradient) {
                     options.series.intensitygraph.gradient = defaultGradient;
                 }
@@ -121,9 +106,11 @@ function IntensityGraph() {
                 if (colorScaleAxis && (!colorScaleAxis.boxPosition || colorScaleAxis.boxPosition.centerX === 0)) {
                     colorScaleAxis.boxPosition = defaultBoxPosition;
                 }
-                opt = options;
+
                 plot.hooks.drawSeries.push(drawSeries);
                 plot.hooks.processRawData.push(processRawData);
+
+                opt = options;
 
                 // caching all the colors of the gradient, min and max in one place
                 options.series.intensitygraph.palette = initColorPalette(options);
@@ -224,7 +211,6 @@ function IntensityGraph() {
                 tempCanvas.getContext('2d').putImageData(imgData, 0, 0);
 
                 ctx.imageSmoothingEnabled = false;
-                ctx.mozImageSmoothingEnabled = false;
                 ctx.webkitImageSmoothingEnabled = false;
                 ctx.msImageSmoothingEnabled = false;
                 ctx.drawImage(tempCanvas, 0, 0, w, h,
@@ -331,10 +317,6 @@ $.plot.plugins.push({
     version: intensityGraph.pluginVersion
 });
 
-if (typeof module === 'object' && module.exports) {
-    module.exports = IntensityGraph;
-} else {
-    global.IntensityGraph = IntensityGraph;
-}
+global.IntensityGraph = IntensityGraph;
 
 })(this, jQuery);
