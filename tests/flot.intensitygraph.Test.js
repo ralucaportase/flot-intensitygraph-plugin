@@ -242,8 +242,8 @@ describe('An Intensity graph', function() {
     it('should draw nothing when the limits of the x axis are negative', function () {
         plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
             grid: {show: false},
-            xaxis: {show: false, min: -10, max: -5, autoscale: 'none'},
-            yaxis: {show: false},
+            xaxis: {show: true, min: -10, max: -5, autoscale: 'none'},
+            yaxis: {show: true},
             series: {
                 intensitygraph: {
                     show: true,
@@ -461,6 +461,50 @@ describe('An Intensity graph', function() {
             plot.draw();
         };
         expect(run).not.toThrow();
+    });
+
+    [true, false].forEach(function(type) {
+        var typeStr = type ? 'point by point' : 'rect by rect',
+            size = type ? 1000 : 100;
+        [1, 2, 3].forEach(function(borderWidth) {
+            it('should not overflow over a border having width = ' + borderWidth + ' when completely filling ' + typeStr, function() {
+                plot = $.plot(placeholder, [createTestMatrix(size, size, 1)], {
+                    grid: {show: true, borderColor: 'rgba(0,255,0,1)', borderWidth: borderWidth, minBorderMargin: 0},
+                    xaxis: {show: false, autoscale: 'exact'},
+                    yaxis: {show: false, autoscale: 'exact'},
+                    series: {
+                        intensitygraph: {
+                            show: true,
+                            gradient: [
+                                { value: 1, color: 'rgba(255,0,0,1)' }
+                            ]
+                        }
+                    }
+                });
+                plot.draw();
+
+                var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d'),
+                    borderColors = [];
+                for (var i = 0; i < borderWidth; i++) {
+                    borderColors.push(getPixelColor(ctx, ctx.canvas.width / 2, i));
+                    borderColors.push(getPixelColor(ctx, ctx.canvas.width - 1 - i, ctx.canvas.height / 2));
+                    borderColors.push(getPixelColor(ctx, ctx.canvas.width / 2, ctx.canvas.height - 1 - i));
+                    borderColors.push(getPixelColor(ctx, i, ctx.canvas.height / 2));
+                }
+                borderColors.forEach(function(bc) {
+                    expect(isClose(bc, rgba(0,255,0,1))).toBeTruthy();
+                });
+
+                var nearBorderColors = [];
+                nearBorderColors.push(getPixelColor(ctx, ctx.canvas.width / 2, borderWidth));
+                nearBorderColors.push(getPixelColor(ctx, ctx.canvas.width - 1 - borderWidth, ctx.canvas.height / 2));
+                nearBorderColors.push(getPixelColor(ctx, ctx.canvas.width / 2, ctx.canvas.height - 1 - borderWidth));
+                nearBorderColors.push(getPixelColor(ctx, borderWidth, ctx.canvas.height / 2));
+                nearBorderColors.forEach(function(nbc) {
+                    expect(isClose(nbc, rgba(255,0,0,1))).toBeTruthy();
+                });
+            });
+        });
     });
 
     [false, true].forEach(function(onlyData, index) {
