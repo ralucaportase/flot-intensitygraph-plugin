@@ -28,7 +28,7 @@
   "devDependencies": {
     "karma-coverage": "^1.1.1",
     "karma-coveralls": "^1.1.2",
-    "karma-spec-reporter": "0.0.26",
+    "karma-spec-reporter": "0.0.31",
     "karma-firefox-launcher": "^1.0.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-phantomjs-launcher": "^1.0.2",
