@@ -611,6 +611,64 @@ describe('An Intensity graph', function() {
         expect(isClose(bottomBorderColor, rgba(0,0,255,1))).toBeTruthy();
     });
 
+    it('should use colorscale limits for data color when autoscale = exact', function() {
+        plot = $.plot(placeholder, [[[0.1, 0.5]]], {
+            xaxis: {show: false, autoscale: 'exact'},
+            yaxes: [{show: false, autoscale: 'exact'
+            }, {
+                position: 'right',
+                show: true,
+                min: 0.1,
+                max: 0.5,
+                autoscale: 'exact',
+                type: 'colorScale'
+            }],
+            series: {
+                intensitygraph: {
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
+                }
+            }
+        });
+
+        plot.draw();
+
+        var colorScaleAxis = plot.getYAxes()[1];
+        expect(colorScaleAxis.min).toEqual(0.1);
+        expect(colorScaleAxis.max).toEqual(0.5);
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d'),
+            bottomColor = getPixelColor(ctx, ctx.canvas.width/2 + 20, ctx.canvas.height - 30),
+            topColor = getPixelColor(ctx, 10, ctx.canvas.height / 2 - 20);
+        expect(isClose(topColor, rgba(0,0,255,1))).toBeTruthy();
+        expect(isClose(bottomColor, rgba(255,0,0,1))).toBeTruthy();
+    });
+
+    it('should draw all values for axis min = 0.1', function() {
+        plot = $.plot(placeholder, [[[0, 1]]], {
+            xaxis: {show: true, autoscale: 'none', min: 0.1, max: 1, showTickLabels: 'all'},
+            yaxis: {show: true, autoscale: 'none', min: 0.1, max: 2, showTickLabels: 'all'},
+            series: {
+                intensitygraph: {
+                    show: true,
+                    gradient: [
+                        { value: 0, color: 'red' },
+                        { value: 1, color: 'blue' }
+                    ]
+                }
+            }
+        });
+
+        plot.draw();
+        var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d'),
+            topColor = getPixelColor(ctx, ctx.canvas.width/2, ctx.canvas.height/2 - 20),
+            bottomColor = getPixelColor(ctx, ctx.canvas.width/2, ctx.canvas.height/2 + 20);
+        expect(isClose(topColor, rgba(0,0,255,1))).toBeTruthy();
+        expect(isClose(bottomColor, rgba(255,0,0,1))).toBeTruthy();
+    });
+
     function getPixelColor(ctx, x, y) {
         return ctx.getImageData(x, y, 1, 1).data;
     }

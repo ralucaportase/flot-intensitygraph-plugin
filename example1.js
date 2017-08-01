@@ -91,7 +91,7 @@ $(function () {
     }, {
       position: 'right',
       show: true,
-      autoscale: 'exact',
+      autoscale: 'none',
       type: 'colorScale'
     }
   ],
