@@ -481,7 +481,6 @@ describe('An Intensity graph', function() {
                         }
                     }
                 });
-                plot.draw();
 
                 var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d'),
                     borderColors = [];
@@ -503,6 +502,62 @@ describe('An Intensity graph', function() {
                 nearBorderColors.forEach(function(nbc) {
                     expect(isClose(nbc, rgba(255,0,0,1))).toBeTruthy();
                 });
+            });
+        });
+    });
+
+    [[true, 4, 2], [true, 4, 0.5], [false, 4, 2], [false, 4, 0.5]].forEach(function(tc) {
+        var typeStr = tc[0] ? 'point by point' : 'rect by rect',
+            size = tc[0] ? 1000 : 50,
+            borderWidth = tc[1], pixelRatio = tc[2];
+            //  borderWidth * pixelRatio must be int to make sure the border is crisp
+            //or at least almost crisp so this test doesn't have to include roundings
+        it('should not overflow over a border having width = ' + borderWidth + ' when completely filling ' + typeStr + ' pixelRatio = ' + pixelRatio, function() {
+            plot = $.plot(placeholder, [createTestMatrix(size, size, 1)], {
+                grid: {show: true, borderColor: 'rgba(0,255,0,1)', borderWidth: borderWidth, minBorderMargin: 0},
+                xaxis: {show: false, autoscale: 'exact'},
+                yaxis: {show: false, autoscale: 'exact'},
+                series: {
+                    intensitygraph: {
+                        show: true,
+                        gradient: [
+                            { value: 1, color: 'rgba(255,0,0,1)' }
+                        ]
+                    }
+                }
+            });
+
+            //  This function will increase the backing store matrix size and
+            //scales the with and height with the specified pixelRatio. The
+            //element style size remains the same so the user will not notice
+            //the scaling because the backing strore matrix will be squeezed
+            //or streched to fill element style size.
+            setPixelRatio(plot, pixelRatio);
+
+            var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d'),
+                //  These are the width and height of the element (the visible matrix)
+                width = px(ctx.canvas.style.width), height = px(ctx.canvas.style.height),
+                borderColors = [];
+            for (var i = 0; i < borderWidth; i++) {
+                //  Here the actual backing store matrix is probed so the
+                //element coordinates have to be translated to the backing store
+                //coordinates.
+                borderColors.push(getScaledPixelColor(ctx, pixelRatio, width / 2, i));
+                borderColors.push(getScaledPixelColor(ctx, pixelRatio, width - 1 - i, height / 2));
+                borderColors.push(getScaledPixelColor(ctx, pixelRatio, width / 2, height - 1 - i));
+                borderColors.push(getScaledPixelColor(ctx, pixelRatio, i, height / 2));
+            }
+            borderColors.forEach(function(bc) {
+                expect(isClose(bc, rgba(0,255,0,1))).toBeTruthy();
+            });
+
+            var nearBorderColors = [];
+            nearBorderColors.push(getScaledPixelColor(ctx, pixelRatio, width / 2, borderWidth));
+            nearBorderColors.push(getScaledPixelColor(ctx, pixelRatio, width - 1 - borderWidth, height / 2));
+            nearBorderColors.push(getScaledPixelColor(ctx, pixelRatio, width / 2, height - 1 - borderWidth));
+            nearBorderColors.push(getScaledPixelColor(ctx, pixelRatio, borderWidth, height / 2));
+            nearBorderColors.forEach(function(nbc) {
+                expect(isClose(nbc, rgba(255,0,0,1))).toBeTruthy();
             });
         });
     });
@@ -673,6 +728,10 @@ describe('An Intensity graph', function() {
         return ctx.getImageData(x, y, 1, 1).data;
     }
 
+    function getScaledPixelColor(ctx, r, x, y) {
+        return getPixelColor(ctx, x * r, y * r);
+    }
+
     function rgba(r, g, b, a) {
         return [r, g, b, a * 255];
     }
@@ -683,6 +742,25 @@ describe('An Intensity graph', function() {
                 .map(function(v, i) { return Math.abs(v - c1[i]); })
                 .every(function(d) { return d <= tolerance; });
         return close;
+    }
+
+    function setPixelRatio(plot, pixelRatio) {
+        plot.getSurface().clear();
+        plot.getSurface().pixelRatio = pixelRatio;
+        placeholder.find('canvas').each(function(_, canvas) {
+            canvas.width = canvas.width * pixelRatio;
+            canvas.height = canvas.height * pixelRatio;
+
+            var context = canvas.getContext('2d');
+            context.restore();
+            context.save();
+            context.scale(pixelRatio, pixelRatio);
+        });
+        plot.draw();
+    }
+
+    function px(str) {
+        return parseInt(str.slice(0, -2));
     }
 
     function createTestMatrix(columns, rows, value) {
