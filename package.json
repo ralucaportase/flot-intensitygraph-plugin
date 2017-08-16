@@ -7,8 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node node_modules/karma/bin/karma start --single-run",
-    "coverage": "node node_modules/karma/bin/karma start --single-run --coverage --browsers=Chrome"
+    "test": "node node_modules/karma/bin/karma start --single-run --no-auto-watch --concurrency=1",
+    "coverage": "node node_modules/karma/bin/karma start --single-run --coverage --browsers=Chrome",
+    "preversion": "npm test"
   },
   "repository": {
     "type": "git",

@@ -562,12 +562,14 @@ describe('An Intensity graph', function() {
         });
     });
 
-    [false, true].forEach(function(onlyData, index) {
-        it('should fill the entire area when the axes limits are non integers and the data is zoomed in ' + (index+1), function () {
+    [false, true].forEach(function(visibleBorder, index) {
+        var visibleBorderText = visibleBorder ? 'visible' : 'not visible';
+
+        it('should fill the entire area when the axes limits are non integers and the data is zoomed in and the border is ' + visibleBorderText, function () {
             plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
-                grid: {show: !onlyData},
-                xaxis: {show: !onlyData, min: 1.123, max: 3.456, autoscale: 'none'},
-                yaxis: {show: !onlyData, min: 2.345, max: 5.678, autoscale: 'none'},
+                grid: {show: visibleBorder},
+                xaxis: {show: visibleBorder, min: 1.123, max: 3.456, autoscale: 'none'},
+                yaxis: {show: visibleBorder, min: 2.345, max: 5.678, autoscale: 'none'},
                 series: {
                     intensitygraph: {
                         show: true,
@@ -583,7 +585,7 @@ describe('An Intensity graph', function() {
             // check the color of random pixels not to be empty
             // avoid the border and axes when they are visible
             var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d'),
-                steps = 10, start = !onlyData ? 2 : 0, stop = !onlyData ? steps - 2 : 0;
+                steps = 10, start = visibleBorder ? 2 : 0, stop = visibleBorder ? steps - 2 : 0;
             for (var i = start; i < stop; i++) {
                 for (var j = start; j < stop; j++) {
                     var c = getPixelColor(ctx, i * ctx.canvas.width / steps, j * ctx.canvas.height / steps);
@@ -591,6 +593,64 @@ describe('An Intensity graph', function() {
                 }
             }
         });
+
+        it('should align the points with the axis ticks when the border is ' + visibleBorderText, function () {
+            /*
+            test matrix:
+
+                    ^ y
+                    |
+                3   | M B G R
+                2   | R M B G
+                1   | G R M B
+                0   | B G R M    x
+                    ------------->
+                      0 1 2 3
+            */
+            var testMatrix = [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]];
+            plot = $.plot(placeholder, [testMatrix], {
+                grid: {show: visibleBorder},
+                xaxis: {show: visibleBorder, min: 1.234, max: 3.456, autoscale: 'none'},
+                yaxis: {show: visibleBorder, min: 0.123, max: 2.345, autoscale: 'none'},
+                series: {
+                    intensitygraph: {
+                        show: true, min: 0, max: 3,
+                        gradient: [
+                            { value: 0, color: 'rgba(0,0,255,0.5)' },
+                            { value: 1, color: 'rgba(0,255,0,0.5)' },
+                            { value: 2, color: 'rgba(255,0,0,0.5)' },
+                            { value: 3, color: 'rgba(255,0,255,0.5)' }
+                        ]
+                    }
+                }
+            });
+
+            var ctx = $(placeholder).find('.flot-base').get(0).getContext('2d');
+
+            // testing the colors of the center of the test matrix which is
+            //not aligned with the center of the canvas/drawing area
+            var e = 0.1; //error caused by scaling up the pixel in rect by rect mode
+            expect(isClose(
+                getPixelColor(ctx, cx(2-e), cy(2-e)), rgba(255,0,0,0.5))).toBeTruthy();
+            expect(isClose(
+                getPixelColor(ctx, cx(2-e), cy(2+e)), rgba(255,0,255,0.5))).toBeTruthy();
+            expect(isClose(
+                getPixelColor(ctx, cx(2+e), cy(2-e)), rgba(255,0,255,0.5))).toBeTruthy();
+            expect(isClose(
+                getPixelColor(ctx, cx(2+e), cy(2+e)), rgba(0,0,255,0.5))).toBeTruthy();
+        });
+
+        function cx(value) {
+            var axis = plot.getXAxes()[0],
+                offset = plot.getPlotOffset();
+            return axis.p2c(value) + offset.left;
+        }
+
+        function cy(value) {
+            var axis = plot.getYAxes()[0],
+                offset = plot.getPlotOffset();
+            return axis.p2c(value) + offset.top;
+        }
     });
 
     it('should draw using the higher color when there are more points per pixel', function () {
