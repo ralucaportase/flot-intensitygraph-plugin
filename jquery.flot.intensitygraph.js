@@ -148,23 +148,20 @@ function IntensityGraph() {
                 palette[i] = imgDataPalette[i];
             }
 
-            var colorStr, colorArr,
-                colorLow = opt.series.intensitygraph.lowColor,
-                colorHigh = opt.series.intensitygraph.highColor;
+            var colorLowStr = opt.series.intensitygraph.lowColor,
+                colorHighStr = opt.series.intensitygraph.highColor,
+                colorLow = $.color.parse(colorLowStr),
+                colorHigh = $.color.parse(colorHighStr);
 
-            colorStr = colorLow.slice(colorLow.indexOf('(') + 1, colorLow.indexOf(')'));
-            colorArr = colorStr.split(',');
-            palette.push(parseInt(colorArr[0], 10));
-            palette.push(parseInt(colorArr[1], 10));
-            palette.push(parseInt(colorArr[2], 10));
-            palette.push(parseFloat(colorArr[3]) * 255);
+            palette.push(colorLow.r | 0);
+            palette.push(colorLow.g | 0);
+            palette.push(colorLow.b | 0);
+            palette.push(colorLow.a * 255 | 0);
 
-            colorStr = colorHigh.slice(colorHigh.indexOf('(') + 1, colorHigh.indexOf(')'));
-            colorArr = colorStr.split(',');
-            palette.push(parseInt(colorArr[0], 10));
-            palette.push(parseInt(colorArr[1], 10));
-            palette.push(parseInt(colorArr[2], 10));
-            palette.push(parseFloat(colorArr[3]) * 255);
+            palette.push(colorHigh.r | 0);
+            palette.push(colorHigh.g | 0);
+            palette.push(colorHigh.b | 0);
+            palette.push(colorHigh.a * 255 | 0);
 
             return palette;
         };
@@ -289,7 +286,7 @@ function IntensityGraph() {
                 var i, j, x, y, x2, y2, x2limit, y2limit, value, value2, index, p, range = maxValue - minValue;
                 for(i = 0; i < w; i++) {
                     x = xc2p(xaxisStart + i/pixelRatio) | 0;
-                    for(j = h; j >= 0; j--) {
+                    for(j = h - 1; j >= 0; j--) {
                         y = yc2p(yaxisStart - j/pixelRatio) | 0;
                         value = data[x][y];
                         x2limit = Math.min(xc2p(xaxisStart + i/pixelRatio + 1), data.length) | 0;

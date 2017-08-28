@@ -68,7 +68,7 @@ describe('An Intensity graph', function() {
                     show: true,
                     min: 0.25,
                     max: 0.75,
-                    lowColor: 'rgba(0,0,0,1)',
+                    lowColor: '#000000ff',
                     highColor: 'rgba(255,255,255,1)',
                     gradient: [
                         { value: 0.25, color: 'red' },
