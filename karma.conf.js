@@ -12,7 +12,8 @@ module.exports = function (config) {
 
     var sources = [
         'jquery.js',
-        'jquery.flot.js'
+        'node_modules/engineering-flot/dist/jquery.flot.js',
+        'node_modules/engineering-flot/jquery.flot.logaxis.js'
     ].concat(coverage_sources);
 
     var settings = {
@@ -26,6 +27,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: sources.concat([
+            'tests/utils/*.js',
             'tests/*.Test.js'
         ]),
 

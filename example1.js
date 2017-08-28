@@ -60,7 +60,6 @@ $(function () {
         active: true,
         show: true,
         max: max,
-        radius: 4.5,
         gradient: [
           { value: 0, color: 'red' },
           { value: 0.12, color: 'orange' },

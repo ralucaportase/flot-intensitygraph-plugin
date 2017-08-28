@@ -172,7 +172,10 @@ function IntensityGraph() {
         function drawSeries(plot, ctx, serie) {
             var offset = plot.getPlotOffset(),
                 pixelRatio = plot.getSurface().pixelRatio,
-                w, h, imgData;
+                yaxes = plot.getYAxes(),
+                colorScaleAxis = yaxes.filter(function (axis) { return isColorScale(axis); })[0],
+                minData = (colorScaleAxis && colorScaleAxis.options.autoscale !== 'none') ? colorScaleAxis.min : serie.intensitygraph.min,
+                maxData = (colorScaleAxis && colorScaleAxis.options.autoscale !== 'none') ? colorScaleAxis.max : serie.intensitygraph.max;
 
             //  The pixelRatio needs to be took into account because the size
             //of the element can be different from the canvas backing store size.
@@ -183,11 +186,60 @@ function IntensityGraph() {
             //data dirrectly to the backing store matrix.
 
             if (serie.data.length > 0 && serie.data[0].length > 0) {
+
+                //  Clipping is needed because the linear rect by rect mode is overflowing
+                //when the limits of the rects are not perfectly alligned with the endpoint ticks.
                 ctx.save();
                 ctx.beginPath();
                 ctx.rect(offset.left, offset.top, plot.width(), plot.height());
                 ctx.clip();
 
+                if (isLinear(serie)) {
+                    drawLinearSeries(serie, ctx);
+                } else {
+                    drawLogSeries(serie, ctx);
+                }
+
+                ctx.restore();
+            }
+
+            drawLegend(plot, ctx, colorScaleAxis);
+
+            function drawLegend(plot, ctx, colorScaleAxis) {
+                var colorScaleGradientWidth = 10,
+                    x = colorScaleAxis  && colorScaleAxis.show ? colorScaleAxis.box.left + colorScaleGradientWidth : offset.left + plot.width() + 20,
+                    gradient = opt.series.intensitygraph.gradient,
+                    lowColor = opt.series.intensitygraph.lowColor,
+                    highColor = opt.series.intensitygraph.highColor;
+                if (colorScaleAxis && colorScaleAxis.show) {
+                    IntensityGraph.prototype.drawLegend(ctx, x, offset.top, colorScaleGradientWidth, plot.height(), gradient, lowColor, highColor);
+                }
+            }
+
+            function drawLogSeries(serie, ctx) {
+                var wstart = Math.max(serie.xaxis.min, 0),
+                    wstop = Math.min(serie.data.length, serie.xaxis.max),
+                    hstart = Math.max(serie.yaxis.min, 0),
+                    hstop = Math.min(serie.data[0].length, serie.yaxis.max),
+                    xaxisStart = serie.xaxis.p2c(wstart),
+                    xaxisStop = serie.xaxis.p2c(wstop),
+                    yaxisStart = serie.yaxis.p2c(hstart),
+                    yaxisStop = serie.yaxis.p2c(hstop),
+                    w2Start = Math.floor(xaxisStart * pixelRatio),
+                    w2Stop = Math.floor(xaxisStop * pixelRatio),
+                    h2Start = Math.floor(yaxisStop * pixelRatio),
+                    h2Stop = Math.floor(yaxisStart * pixelRatio),
+                    w = w2Stop - w2Start,
+                    h = h2Stop - h2Start;
+                if (w > 0 && h > 0) {
+                    var imgData = getImageData(ctx, w, h);
+                    drawLogSeriesPointByPoint(imgData, xaxisStart, xaxisStop, yaxisStart, yaxisStop, w, h, serie.xaxis.c2p, serie.yaxis.c2p,
+                        serie.intensitygraph.palette, serie.data, minData, maxData, pixelRatio);
+                    ctx.putImageData(imgData, Math.ceil((xaxisStart + offset.left) * pixelRatio), Math.ceil((yaxisStop + offset.top) * pixelRatio));
+                }
+            }
+
+            function drawLinearSeries(serie, ctx) {
                 var wstart = Math.floor(Math.max(serie.xaxis.min, 0)) | 0,
                     wstop = Math.ceil(Math.min(serie.data.length, serie.xaxis.max)) | 0,
                     hstart = Math.floor(Math.max(serie.yaxis.min, 0)) | 0,
@@ -200,8 +252,7 @@ function IntensityGraph() {
                     ypctsPerPx = Math.abs((hstop - hstart) / (yaxisStop - yaxisStart)) / pixelRatio,
                     decimate = xpctsPerPx > 1 && ypctsPerPx > 1,
                     colorScaleAxis = plot.getYAxes().filter(function (axis) { return IntensityGraph.prototype.isColorScale(axis); })[0],
-                    minData = (colorScaleAxis && colorScaleAxis.options.autoscale !== 'none') ? colorScaleAxis.min : serie.intensitygraph.min,
-                    maxData = (colorScaleAxis && colorScaleAxis.options.autoscale !== 'none') ? colorScaleAxis.max : serie.intensitygraph.max;
+                    w, h, imageData;
 
                 if (decimate) {
                     var w2Start = Math.floor(xaxisStart * pixelRatio),
@@ -232,19 +283,51 @@ function IntensityGraph() {
                             Math.max(xaxisStop - xaxisStart, 1), Math.max(yaxisStart - yaxisStop, 1));
                     }
                 }
-
-                ctx.restore();
             }
 
-            var yaxes = plot.getYAxes(),
-                colorScaleAxis = yaxes.filter(function (axis) { return isColorScale(axis); })[0],
-                colorScaleGradientWidth = 10,
-                x = colorScaleAxis  && colorScaleAxis.show ? colorScaleAxis.box.left + colorScaleGradientWidth : offset.left + plot.width() + 20,
-                gradient = opt.series.intensitygraph.gradient,
-                lowColor = opt.series.intensitygraph.lowColor,
-                highColor = opt.series.intensitygraph.highColor;
-            if (colorScaleAxis && colorScaleAxis.show) {
-                IntensityGraph.prototype.drawLegend(ctx, x, offset.top, colorScaleGradientWidth, plot.height(), gradient, lowColor, highColor);
+            function drawLogSeriesPointByPoint(imgData, xaxisStart, xaxisStop, yaxisStart, yaxisStop, w, h, xc2p, yc2p, palette, data, minValue, maxValue, pixelRatio) {
+                var i, j, x, y, x2, y2, x2limit, y2limit, value, value2, index, p, range = maxValue - minValue;
+                for(i = 0; i < w; i++) {
+                    x = xc2p(xaxisStart + i/pixelRatio) | 0;
+                    for(j = h; j >= 0; j--) {
+                        y = yc2p(yaxisStart - j/pixelRatio) | 0;
+                        value = data[x][y];
+                        x2limit = Math.min(xc2p(xaxisStart + i/pixelRatio + 1), data.length) | 0;
+                        y2limit = Math.min(yc2p(yaxisStart - j/pixelRatio - 1), data[0].length) | 0;
+                        for (x2 = x; x2 < x2limit; x2++) {
+                            for (y2 = y; y2 < y2limit; y2++) {
+                                value2 = data[x2][y2];
+                                if (value2 > value) {
+                                    value = value2;
+                                }
+                            }
+                        }
+                        for (x2 = x; x2 < x2limit; x2++) {
+                            value2 = data[x2][y];
+                            if (value2 > value) {
+                                value = value2;
+                            }
+                        }
+                        for (y2 = y; y2 < y2limit; y2++) {
+                            value2 = data[x][y2];
+                            if (value2 > value) {
+                                value = value2;
+                            }
+                        }
+                        if (value < minValue) {
+                            index = 256 * 4;
+                        } else if (value > maxValue) {
+                            index = 256 * 4 + 4;
+                        } else {
+                            index = 4 * Math.round((value - minValue) * 255 / range)
+                        }
+                        p = 4*(h-j-1)*w + 4*i;
+                        imgData.data[p + 0] = palette[index + 0];
+                        imgData.data[p + 1] = palette[index + 1];
+                        imgData.data[p + 2] = palette[index + 2];
+                        imgData.data[p + 3] = palette[index + 3];
+                    }
+                }
             }
 
             function drawSeriesPointByPoint(imgData, wstart, wstop, hstart, hstop, w, h, xpctsPerPx, ypctsPerPx, palette, data, minValue, maxValue) {
@@ -323,6 +406,11 @@ function IntensityGraph() {
                     hiddenImageData = hiddenCanvas.getContext('2d').createImageData(width, height);
                 }
                 return hiddenImageData;
+            }
+
+            function isLinear(series) {
+                return (!serie.xaxis.options.mode || serie.xaxis.options.mode === 'linear') &&
+                  (!serie.yaxis.options.mode || serie.yaxis.options.mode === 'linear');
             }
         };
     };
