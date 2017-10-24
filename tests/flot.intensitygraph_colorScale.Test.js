@@ -26,7 +26,7 @@ describe('Color scale', function() {
                 show: true,
                 min: 0,
                 max: 50,
-                autoscale: 'none'
+                autoScale: 'none'
             }, {
                 position: 'right',
                 show: true,
@@ -55,13 +55,13 @@ describe('Color scale', function() {
                         show: true,
                         min: 0,
                         max: 50,
-                        autoscale: 'none'
+                        autoScale: 'none'
                     }, {
                         position: 'right',
                         show: true,
                         min: 0,
                         max: 50,
-                        autoscale: 'none'
+                        autoScale: 'none'
                     }, {
                         position: 'right',
                         show: true,
@@ -74,7 +74,7 @@ describe('Color scale', function() {
                         show: true,
                         min: 0,
                         max: 50,
-                        autoscale: 'none'
+                        autoScale: 'none'
                     }
                 ],
             });

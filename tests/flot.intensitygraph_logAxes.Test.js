@@ -21,8 +21,8 @@ describe('An Intensity graph with log axes', function() {
         it('should use the log mode of the x axis when borderWidth = ' + borderWidth, function () {
             plot = $.plot(placeholder, [[[0, 0], [1, 1], [2, 2]]], {
                 grid: {show: borderWidth > 0, borderWidth: borderWidth},
-                xaxis: {show: false, mode: 'log', autoscale: 'none', min: 0.01, max: 3},
-                yaxis: {show: false, autoscale: 'none', min: 1, max: 2},
+                xaxis: {show: false, mode: 'log', autoScale: 'none', min: 0.01, max: 3},
+                yaxis: {show: false, autoScale: 'none', min: 1, max: 2},
                 series: {
                     intensitygraph: {
                         show: true, min: 0, max: 2,
@@ -48,8 +48,8 @@ describe('An Intensity graph with log axes', function() {
         it('should use the log mode of the y axis when borderWidth = ' + borderWidth, function () {
             plot = $.plot(placeholder, [[[0, 1, 2], [0, 1, 2]]], {
                 grid: {show: borderWidth > 0, borderWidth: borderWidth},
-                xaxis: {show: false, autoscale: 'none', min: 1, max: 2},
-                yaxis: {show: false, mode: 'log', autoscale: 'none', min: 0.01, max: 3},
+                xaxis: {show: false, autoScale: 'none', min: 1, max: 2},
+                yaxis: {show: false, mode: 'log', autoScale: 'none', min: 0.01, max: 3},
                 series: {
                     intensitygraph: {
                         show: true, min: 0, max: 2,
@@ -75,8 +75,8 @@ describe('An Intensity graph with log axes', function() {
         it('should use the log mode of the x and y axes when borderWidth = ' + borderWidth, function () {
             plot = $.plot(placeholder, [[[-1, -2, -3], [0, 1, 2], [5, 3, 4]]], {
                 grid: {show: borderWidth > 0, borderWidth: borderWidth},
-                xaxis: {show: false, mode: 'log', autoscale: 'none', min: 0.1, max: 3},
-                yaxis: {show: false, mode: 'log', autoscale: 'none', min: 0.1, max: 3},
+                xaxis: {show: false, mode: 'log', autoScale: 'none', min: 0.1, max: 3},
+                yaxis: {show: false, mode: 'log', autoScale: 'none', min: 0.1, max: 3},
                 series: {
                     intensitygraph: {
                         show: true, min: -3, max: 5,
@@ -109,8 +109,8 @@ describe('An Intensity graph with log axes', function() {
             */
             plot = $.plot(placeholder, [createPatternTestMatrix(2000, 2)], {
                 grid: {show: borderWidth > 0, borderWidth: borderWidth},
-                xaxis: {show: false, mode: 'log', autoscale: 'none', min: 1, max: 2000},
-                yaxis: {show: false, mode: 'log', autoscale: 'none', min: 1, max: 2},
+                xaxis: {show: false, mode: 'log', autoScale: 'none', min: 1, max: 2000},
+                yaxis: {show: false, mode: 'log', autoScale: 'none', min: 1, max: 2},
                 series: {
                     intensitygraph: {
                         show: true,
@@ -138,8 +138,8 @@ describe('An Intensity graph with log axes', function() {
             */
             plot = $.plot(placeholder, [createPatternTestMatrix(2, 2000)], {
                 grid: {show: borderWidth > 0, borderWidth: borderWidth},
-                xaxis: {show: false, mode: 'log', autoscale: 'none', min: 1, max: 2},
-                yaxis: {show: false, mode: 'log', autoscale: 'none', min: 1, max: 2000},
+                xaxis: {show: false, mode: 'log', autoScale: 'none', min: 1, max: 2},
+                yaxis: {show: false, mode: 'log', autoScale: 'none', min: 1, max: 2000},
                 series: {
                     intensitygraph: {
                         show: true,
@@ -174,8 +174,8 @@ describe('An Intensity graph with log axes', function() {
             var dx = 1000, dy = 1000;
             plot = $.plot(placeholder, [createPatternTestMatrix(dx, dy)], {
                 grid: {show: borderWidth > 0, borderWidth: borderWidth},
-                xaxis: {show: false, mode: 'log', autoscale: 'none', min: 1, max: dx},
-                yaxis: {show: false, mode: 'log', autoscale: 'none', min: 1, max: dy},
+                xaxis: {show: false, mode: 'log', autoScale: 'none', min: 1, max: dx},
+                yaxis: {show: false, mode: 'log', autoScale: 'none', min: 1, max: dy},
                 series: {
                     intensitygraph: {
                         show: true,
@@ -203,8 +203,8 @@ describe('An Intensity graph with log axes', function() {
     it('should use the minimum and maximum colors when the values are out of gradient range', function () {
         plot = $.plot(placeholder, [[[10, 11], [-11, -10]]], {
             grid: {show: false},
-            xaxis: {show: false, mode: 'log', autoscale: 'none', min: 0.01, max: 2},
-            yaxis: {show: false, mode: 'log', autoscale: 'none', min: 0.01, max: 2},
+            xaxis: {show: false, mode: 'log', autoScale: 'none', min: 0.01, max: 2},
+            yaxis: {show: false, mode: 'log', autoScale: 'none', min: 0.01, max: 2},
             series: {
                 intensitygraph: {
                     show: true, min: -10, max: 10,

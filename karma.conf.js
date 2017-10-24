@@ -6,14 +6,24 @@ var module;
 module.exports = function (config) {
     'use strict';
 
+    var browsersMatrix = {
+            'win': ['Firefox', 'Chrome', 'Edge'],
+            'linux': ['Firefox', 'Chrome'],
+            'mac': ['Safari', 'Firefox', 'Chrome']
+        },
+        isWin = /^win/.test(process.platform),
+        isLinux = /^linux/.test(process.platform),
+        isMac = /^darwin/.test(process.platform),
+        currentOSType = isWin ? 'win' : (isLinux ? 'linux' : 'mac'),
+        currentOSBrowsers = browsersMatrix[currentOSType];
+
     var coverage_sources = [
         'jquery.flot.intensitygraph.js'
     ];
 
     var sources = [
         'jquery.js',
-        'node_modules/engineering-flot/dist/jquery.flot.js',
-        'node_modules/engineering-flot/jquery.flot.logaxis.js'
+        'node_modules/engineering-flot/dist/es5/jquery.flot.js'
     ].concat(coverage_sources);
 
     var settings = {
@@ -65,7 +75,7 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['PhantomJS', 'Firefox', 'Chrome'],
+        browsers: currentOSBrowsers,
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits

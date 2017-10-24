@@ -79,18 +79,18 @@ $(function () {
       show: true,
       min:   0,
       max: 100,
-      autoscale: 'none'
+      autoScale: 'none'
     },
     yaxes: [{
       position: 'right',
       show: true,
       min: 0,
       max: 50,
-      autoscale: 'none'
+      autoScale: 'none'
     }, {
       position: 'right',
       show: true,
-      autoscale: 'none',
+      autoScale: 'none',
       type: 'colorScale'
     }
   ],

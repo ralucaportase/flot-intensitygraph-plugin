@@ -91,8 +91,8 @@ describe('An Intensity graph', function() {
     it('should draw using the low color when there are more points per pixel', function () {
         plot = $.plot(placeholder, [createTestMatrix(1000, 1000, 0)], {
             grid: {show: false},
-            xaxis: {show: false, autoscale: 'exact'},
-            yaxis: {show: false, autoscale: 'exact'},
+            xaxis: {show: false, autoScale: 'exact'},
+            yaxis: {show: false, autoScale: 'exact'},
             series: {
                 intensitygraph: {
                     show: true,
@@ -117,8 +117,8 @@ describe('An Intensity graph', function() {
     it('should draw using the high color when there are more points per pixel', function () {
         plot = $.plot(placeholder, [createTestMatrix(1000, 1000, 1)], {
             grid: {show: false},
-            xaxis: {show: false, autoscale: 'exact'},
-            yaxis: {show: false, autoscale: 'exact'},
+            xaxis: {show: false, autoScale: 'exact'},
+            yaxis: {show: false, autoScale: 'exact'},
             series: {
                 intensitygraph: {
                     show: true,
@@ -242,7 +242,7 @@ describe('An Intensity graph', function() {
     it('should draw nothing when the limits of the x axis are negative', function () {
         plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
             grid: {show: false},
-            xaxis: {show: true, min: -10, max: -5, autoscale: 'none'},
+            xaxis: {show: true, min: -10, max: -5, autoScale: 'none'},
             yaxis: {show: true},
             series: {
                 intensitygraph: {
@@ -268,7 +268,7 @@ describe('An Intensity graph', function() {
     it('should draw nothing when the limits of the x axis are above the data width', function () {
         plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
             grid: {show: false},
-            xaxis: {show: false, min: 5, max: 10, autoscale: 'none'},
+            xaxis: {show: false, min: 5, max: 10, autoScale: 'none'},
             yaxis: {show: false},
             series: {
                 intensitygraph: {
@@ -295,7 +295,7 @@ describe('An Intensity graph', function() {
         plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
             grid: {show: false},
             xaxis: {show: false},
-            yaxis: {show: false, min: -10, max: -5, autoscale: 'none'},
+            yaxis: {show: false, min: -10, max: -5, autoScale: 'none'},
             series: {
                 intensitygraph: {
                     show: true,
@@ -321,7 +321,7 @@ describe('An Intensity graph', function() {
         plot = $.plot(placeholder, [[[0], [0.5], [1]]], {
             grid: {show: false},
             xaxis: {show: false},
-            yaxis: {show: false, min: 5, max: 10, autoscale: 'none'},
+            yaxis: {show: false, min: 5, max: 10, autoScale: 'none'},
             series: {
                 intensitygraph: {
                     show: true,
@@ -363,8 +363,8 @@ describe('An Intensity graph', function() {
                                      [0.2, 0.8],
                                      [0.4, 1.0]]], {
             grid: {show: true},
-            xaxis: {show: true, min: 1, max: 4, autoscale: 'none'},
-            yaxis: {show: true, min: 1, max: 3, autoscale: 'none'},
+            xaxis: {show: true, min: 1, max: 4, autoScale: 'none'},
+            yaxis: {show: true, min: 1, max: 3, autoScale: 'none'},
             series: {
                 intensitygraph: {
                     show: true,
@@ -408,8 +408,8 @@ describe('An Intensity graph', function() {
                                      [0.2, 0.8],
                                      [0.4, 1.0]]], {
             grid: {show: true},
-            xaxis: {show: true, min: -1, max: 2, autoscale: 'none'},
-            yaxis: {show: true, min: -1, max: 1, autoscale: 'none'},
+            xaxis: {show: true, min: -1, max: 2, autoScale: 'none'},
+            yaxis: {show: true, min: -1, max: 1, autoScale: 'none'},
             series: {
                 intensitygraph: {
                     show: true,
@@ -447,13 +447,13 @@ describe('An Intensity graph', function() {
                     show: false,
                     min: -100,
                     max: 1000,
-                    autoscale: 'none'
+                    autoScale: 'none'
                 }],
                 yaxes: [{
                     show: false,
                     min: -9.3,
                     max: 1000,
-                    autoscale: 'none'
+                    autoScale: 'none'
                 }],
                 plotWidth: 123.45,
                 plotHeight: 234.56
@@ -470,8 +470,8 @@ describe('An Intensity graph', function() {
             it('should not overflow over a border having width = ' + borderWidth + ' when completely filling ' + typeStr, function() {
                 plot = $.plot(placeholder, [createTestMatrix(size, size, 1)], {
                     grid: {show: true, borderColor: 'rgba(0,255,0,1)', borderWidth: borderWidth, minBorderMargin: 0},
-                    xaxis: {show: false, autoscale: 'exact'},
-                    yaxis: {show: false, autoscale: 'exact'},
+                    xaxis: {show: false, autoScale: 'exact'},
+                    yaxis: {show: false, autoScale: 'exact'},
                     series: {
                         intensitygraph: {
                             show: true,
@@ -515,8 +515,8 @@ describe('An Intensity graph', function() {
         it('should not overflow over a border having width = ' + borderWidth + ' when completely filling ' + typeStr + ' pixelRatio = ' + pixelRatio, function() {
             plot = $.plot(placeholder, [createTestMatrix(size, size, 1)], {
                 grid: {show: true, borderColor: 'rgba(0,255,0,1)', borderWidth: borderWidth, minBorderMargin: 0},
-                xaxis: {show: false, autoscale: 'exact'},
-                yaxis: {show: false, autoscale: 'exact'},
+                xaxis: {show: false, autoScale: 'exact'},
+                yaxis: {show: false, autoScale: 'exact'},
                 series: {
                     intensitygraph: {
                         show: true,
@@ -568,8 +568,8 @@ describe('An Intensity graph', function() {
         it('should fill the entire area when the axes limits are non integers and the data is zoomed in and the border is ' + visibleBorderText, function () {
             plot = $.plot(placeholder, [createTestMatrix(40, 60)], {
                 grid: {show: visibleBorder},
-                xaxis: {show: visibleBorder, min: 1.123, max: 3.456, autoscale: 'none'},
-                yaxis: {show: visibleBorder, min: 2.345, max: 5.678, autoscale: 'none'},
+                xaxis: {show: visibleBorder, min: 1.123, max: 3.456, autoScale: 'none'},
+                yaxis: {show: visibleBorder, min: 2.345, max: 5.678, autoScale: 'none'},
                 series: {
                     intensitygraph: {
                         show: true,
@@ -610,8 +610,8 @@ describe('An Intensity graph', function() {
             var testMatrix = [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]];
             plot = $.plot(placeholder, [testMatrix], {
                 grid: {show: visibleBorder},
-                xaxis: {show: visibleBorder, min: 1.234, max: 3.456, autoscale: 'none'},
-                yaxis: {show: visibleBorder, min: 0.123, max: 2.345, autoscale: 'none'},
+                xaxis: {show: visibleBorder, min: 1.234, max: 3.456, autoScale: 'none'},
+                yaxis: {show: visibleBorder, min: 0.123, max: 2.345, autoScale: 'none'},
                 series: {
                     intensitygraph: {
                         show: true, min: 0, max: 3,
@@ -663,8 +663,8 @@ describe('An Intensity graph', function() {
         */
         plot = $.plot(placeholder, [createPatternTestMatrix(500, 300)], {
             grid: {show: true},
-            xaxis: {show: true, min: -100, max: 600, autoscale: 'none'},
-            yaxis: {show: true, min: -100, max: 400, autoscale: 'none'},
+            xaxis: {show: true, min: -100, max: 600, autoScale: 'none'},
+            yaxis: {show: true, min: -100, max: 400, autoScale: 'none'},
             series: {
                 intensitygraph: {
                     show: true,
@@ -703,8 +703,8 @@ describe('An Intensity graph', function() {
         */
         plot = $.plot(placeholder, [createBorderTestMatrix(1000, 1000)], {
             grid: {show: false},
-            xaxis: {show: false, autoscale: 'exact'},
-            yaxis: {show: false, autoscale: 'exact'},
+            xaxis: {show: false, autoScale: 'exact'},
+            yaxis: {show: false, autoScale: 'exact'},
             series: {
                 intensitygraph: {
                     show: true,
@@ -726,16 +726,16 @@ describe('An Intensity graph', function() {
         expect(isClose(bottomBorderColor, rgba(0,0,255,1))).toBeTruthy();
     });
 
-    it('should use colorscale limits for data color when autoscale = exact', function() {
+    it('should use colorscale limits for data color when autoScale = exact', function() {
         plot = $.plot(placeholder, [[[0.1, 0.5]]], {
-            xaxis: {show: false, autoscale: 'exact'},
-            yaxes: [{show: false, autoscale: 'exact'
+            xaxis: {show: false, autoScale: 'exact'},
+            yaxes: [{show: false, autoScale: 'exact'
             }, {
                 position: 'right',
                 show: true,
                 min: 0.1,
                 max: 0.5,
-                autoscale: 'exact',
+                autoScale: 'exact',
                 type: 'colorScale'
             }],
             series: {
@@ -763,8 +763,8 @@ describe('An Intensity graph', function() {
 
     it('should draw all values for axis min = 0.1', function() {
         plot = $.plot(placeholder, [[[0, 1]]], {
-            xaxis: {show: true, autoscale: 'none', min: 0.1, max: 1, showTickLabels: 'all'},
-            yaxis: {show: true, autoscale: 'none', min: 0.1, max: 2, showTickLabels: 'all'},
+            xaxis: {show: true, autoScale: 'none', min: 0.1, max: 1, showTickLabels: 'all'},
+            yaxis: {show: true, autoScale: 'none', min: 0.1, max: 2, showTickLabels: 'all'},
             series: {
                 intensitygraph: {
                     show: true,

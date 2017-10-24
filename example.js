@@ -76,7 +76,7 @@ $(function () {
     },
     yaxis: {
       show: true,
-      autoscale: 'exact'
+      autoScale: 'exact'
     },
     grid: {
       aboveData: true
